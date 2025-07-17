@@ -1,0 +1,953 @@
+<script>
+        // Language translations
+        const translations = {
+            en: {
+                challenge_title: "30-Day Python Challenge",
+                challenge_subtitle: "Join us for an intensive Python learning journey leading to PyCon Togo 2025",
+                countdown_title: "Challenge Starts In:",
+                days: "Days",
+                hours: "Hours",
+                minutes: "Minutes",
+                seconds: "Seconds",
+                challenge_info_title: "🎯 Challenge Details",
+                duration: "Duration:",
+                duration_text: "July 23, 2025 - August 21, 2025 (30 days)",
+                prize_ceremony: "Prize Ceremony:",
+                prize_ceremony_text: "PyCon Togo 2025 - August 23, 2025",
+                daily_tasks: "Daily Tasks:",
+                daily_tasks_text: "From beginner to advanced Python concepts",
+                strict_deadlines: "Strict Deadlines:",
+                strict_deadlines_text: "Each task must be submitted by 11:59 PM local time",
+                progress_tracking: "Progress Tracking:",
+                progress_tracking_text: "Monitor your journey through our dashboard",
+                register_title: "📝 Register for Challenge",
+                full_name: "Full Name *",
+                email: "Email Address *",
+                github: "GitHub Username (Optional)",
+                experience: "Python Experience Level *",
+                select_level: "Select your level",
+                beginner: "Beginner",
+                intermediate: "Intermediate",
+                advanced: "Advanced",
+                join_challenge: "Join the Challenge",
+                submit_title: "📤 Submit Daily Task",
+                your_email: "Your Email *",
+                task_day: "Task Day *",
+                select_day: "Select day",
+                solution: "Your Solution *",
+                solution_placeholder: "Paste your Python code here...",
+                explanation: "Explanation (Optional)",
+                explanation_placeholder: "Explain your approach...",
+                submit_solution: "Submit Solution",
+                progress_title: "📊 Your Progress",
+                enter_email: "Enter your email to view progress:",
+                email_placeholder: "your@email.com",
+                load_progress: "Load Progress",
+                challenge_live: "Challenge is Live! 🚀",
+                registration_success: "Registration successful! Welcome to the challenge!",
+                registration_failed: "Registration failed. Please try again.",
+                submission_success: "Solution submitted successfully!",
+                submission_failed: "Submission failed. Please try again.",
+                network_error: "Network error. Please check your connection and try again.",
+                enter_email_alert: "Please enter your email address",
+                progress_load_failed: "Failed to load progress. Please check your email and try again.",
+                total_tasks: "Total Tasks:",
+                completed: "Completed:",
+                pending: "Pending:",
+                late_submissions: "Late Submissions:",
+                task_status: "📋 Task Status",
+                deadline: "Deadline:",
+                submitted: "Submitted:"
+            },
+            fr: {
+                challenge_title: "Défi Python de 30 Jours",
+                challenge_subtitle: "Rejoignez-nous pour un parcours d'apprentissage intensif de Python menant à PyCon Togo 2025",
+                countdown_title: "Le Défi Commence Dans:",
+                days: "Jours",
+                hours: "Heures",
+                minutes: "Minutes",
+                seconds: "Secondes",
+                challenge_info_title: "🎯 Détails du Défi",
+                duration: "Durée:",
+                duration_text: "23 juillet 2025 - 21 août 2025 (30 jours)",
+                prize_ceremony: "Cérémonie de Remise des Prix:",
+                prize_ceremony_text: "PyCon Togo 2025 - 23 août 2025",
+                daily_tasks: "Tâches Quotidiennes:",
+                daily_tasks_text: "Des concepts Python débutant à avancé",
+                strict_deadlines: "Délais Stricts:",
+                strict_deadlines_text: "Chaque tâche doit être soumise avant 23h59 heure locale",
+                progress_tracking: "Suivi des Progrès:",
+                progress_tracking_text: "Surveillez votre parcours via notre tableau de bord",
+                register_title: "📝 S'inscrire au Défi",
+                full_name: "Nom Complet *",
+                email: "Adresse Email *",
+                github: "Nom d'utilisateur GitHub (Optionnel)",
+                experience: "Niveau d'Expérience Python *",
+                select_level: "Sélectionnez votre niveau",
+                beginner: "Débutant",
+                intermediate: "Intermédiaire",
+                advanced: "Avancé",
+                join_challenge: "Rejoindre le Défi",
+                submit_title: "📤 Soumettre la Tâche Quotidienne",
+                your_email: "Votre Email *",
+                task_day: "Jour de la Tâche *",
+                select_day: "Sélectionnez le jour",
+                solution: "Votre Solution *",
+                solution_placeholder: "Collez votre code Python ici...",
+                explanation: "Explication (Optionnel)",
+                explanation_placeholder: "Expliquez votre approche...",
+                submit_solution: "Soumettre la Solution",
+                progress_title: "📊 Vos Progrès",
+                enter_email: "Entrez votre email pour voir les progrès:",
+                email_placeholder: "votre@email.com",
+                load_progress: "Charger les Progrès",
+                challenge_live: "Le Défi est En Direct! 🚀",
+                registration_success: "Inscription réussie! Bienvenue au défi!",
+                registration_failed: "Échec de l'inscription. Veuillez réessayer.",
+                submission_success: "Solution soumise avec succès!",
+                submission_failed: "Échec de la soumission. Veuillez réessayer.",
+                network_error: "Erreur réseau. Vérifiez votre connexion et réessayez.",
+                enter_email_alert: "Veuillez entrer votre adresse email",
+                progress_load_failed: "Échec du chargement des progrès. Vérifiez votre email et réessayez.",
+                total_tasks: "Tâches Totales:",
+                completed: "Terminées:",
+                pending: "En Attente:",
+                late_submissions: "Soumissions en Retard:",
+                task_status: "📋 Statut des Tâches",
+                deadline: "Date Limite:",
+                submitted: "Soumis:"
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // Language switching function
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+            
+            // Update select options
+            const experienceOptions = document.querySelectorAll('#experience option');
+            experienceOptions.forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            const dayOptions = document.querySelectorAll('#task-day option');
+            dayOptions.forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update placeholders
+            document.getElementById('solution').placeholder = translations[lang].solution_placeholder;
+            document.getElementById('explanation').placeholder = translations[lang].explanation_placeholder;
+            document.getElementById('dashboard-email').placeholder = translations[lang].email_placeholder;
+        }
+
+        // Countdown Timer
+        function updateCountdown() {
+            const challengeStart = new Date('2025-07-21T00:00:00');
+            const now = new Date();
+            const diff = challengeStart - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            } else {
+                document.getElementById('countdown').innerHTML = `<h2>${translations[currentLanguage].challenge_live}</h2>`;
+            }
+        }
+
+        // Initialize countdown
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Populate task days
+        function populateTaskDays() {
+            const taskDaySelect = document.getElementById('task-day');
+            const startDate = new Date('2025-07-21');
+            
+            for (let i = 1; i <= 30; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i - 1);
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Day ${i} (${currentDate.toLocaleDateString()})`;
+                taskDaySelect.appendChild(option);
+            }
+        }
+
+        populateTaskDays();
+
+        // Alert functions
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Registration form handler
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('alert-container', translations[currentLanguage].registration_success, 'success');
+                    e.target.reset();
+                } else {
+                    const error = await response.json();
+                    showAlert('alert-container', error.detail || translations[currentLanguage].registration_failed, 'error');
+                }
+            } catch (error) {
+                showAlert('alert-container', translations[currentLanguage].network_error, 'error');
+            }
+        });
+
+        // Submission form handler
+        document.getElementById('submission-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('submission-alert-container', translations[currentLanguage].submission_success, 'success');
+                    e.target.reset();
+                } else {
+                    const error = await response.json();
+                    showAlert('submission-alert-container', error.detail || translations[currentLanguage].submission_failed, 'error');
+                }
+            } catch (error) {
+                showAlert('submission-alert-container', translations[currentLanguage].network_error, 'error');
+            }
+        });
+
+        // Progress loading function
+        async function loadProgress() {
+            const email = document.getElementById('dashboard-email').value;
+            if (!email) {
+                alert(translations[currentLanguage].enter_email_alert);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/progress/${email}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    displayProgress(data);
+                } else {
+                    alert(translations[currentLanguage].progress_load_failed);
+                }
+            } catch (error) {
+                alert(translations[currentLanguage].network_error);
+            }
+        }
+
+        // Display progress function
+        function displayProgress(data) {
+            const progressDisplay = document.getElementById('progress-display');
+            const progressStats = document.getElementById('progress-stats');
+            const taskList = document.getElementById('task-list');
+
+            progressStats.innerHTML = `
+                <h3>📈 ${translations[currentLanguage].progress_title.replace('📊 ', '')}</h3>
+                <p><strong>${translations[currentLanguage].total_tasks}</strong> ${data.total_tasks}</p>
+                <p><strong>${translations[currentLanguage].completed}</strong> ${data.completed_tasks}</p>
+                <p><strong>${translations[currentLanguage].pending}</strong> ${data.pending_tasks}</p>
+                <p><strong>${translations[currentLanguage].late_submissions}</strong> ${data.late_submissions}</p>
+            `;
+
+            taskList.innerHTML = `<h3>${translations[currentLanguage].task_status}</h3>`;
+            data.tasks.forEach(task => {
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
+                taskCard.innerHTML = `
+                    <h4>Day ${task.day}</h4>
+                    <p><strong>${translations[currentLanguage].deadline}</strong> ${task.deadline}</p>
+                    <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
+                    ${task.submitted_at ? `<p><small>${translations[currentLanguage].submitted} ${task.submitted_at}</small></p>` : ''}
+                `;
+                taskList.appendChild(taskCard);
+            });
+
+                // progressDisplay
+            }
+            </script>
+
+    
+        
+            
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-Day Python Challenge | PyCon Togo 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e8f5e9;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #056d1e;
+            border-color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .header {
+            
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+            
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .countdown h2 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 80px;
+        }
+
+        .time-unit .number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .time-unit .label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #056d1e;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #056d1e;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #056d1e 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .challenge-info {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .challenge-info h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .challenge-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .challenge-info li {
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .challenge-info li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #056d1e;
+        }
+
+        .task-card h3 {
+            color: #056d1e;
+            margin-bottom: 10px;
+        }
+
+        .task-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-submitted {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-late {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .countdown-timer {
+                gap: 10px;
+            }
+
+            .time-unit {
+                min-width: 60px;
+                padding: 10px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="language-switcher">
+            <button onclick="switchLanguage('en')" class="lang-btn active" id="lang-en">English</button>
+            <button onclick="switchLanguage('fr')" class="lang-btn" id="lang-fr">Français</button>
+        </div>
+
+        <div class="header">
+            
+            <h1> <img src="static/images/logo.png" alt=""><span data-translate="challenge_title">30-Day Python Challenge</span></h1>
+            <p data-translate="challenge_subtitle">Join us for an intensive Python learning journey leading to PyCon Togo 2025</p>
+        </div>
+
+        <div class="countdown">
+            <h2 data-translate="countdown_title">Challenge Starts In:</h2>
+            <div class="countdown-timer" id="countdown">
+                <div class="time-unit">
+                    <span class="number" id="days">00</span>
+                    <span class="label" data-translate="days">Days</span>
+                </div>
+                <div class="time-unit">
+                    <span class="number" id="hours">00</span>
+                    <span class="label" data-translate="hours">Hours</span>
+                </div>
+                <div class="time-unit">
+                    <span class="number" id="minutes">00</span>
+                    <span class="label" data-translate="minutes">Minutes</span>
+                </div>
+                <div class="time-unit">
+                    <span class="number" id="seconds">00</span>
+                    <span class="label" data-translate="seconds">Seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="challenge-info">
+            <h2 data-translate="challenge_info_title">🎯 Challenge Details</h2>
+            <ul>
+                <li><strong data-translate="duration">Duration:</strong> <span data-translate="duration_text">July 23, 2025 - August 21, 2025 (30 days)</span></li>
+                <li><strong data-translate="prize_ceremony">Prize Ceremony:</strong> <span data-translate="prize_ceremony_text">PyCon Togo 2025 - August 23, 2025</span></li>
+                <li><strong data-translate="daily_tasks">Daily Tasks:</strong> <span data-translate="daily_tasks_text">From beginner to advanced Python concepts</span></li>
+                <li><strong data-translate="strict_deadlines">Strict Deadlines:</strong> <span data-translate="strict_deadlines_text">Each task must be submitted by 11:59 PM local time</span></li>
+                <li><strong data-translate="progress_tracking">Progress Tracking:</strong> <span data-translate="progress_tracking_text">Monitor your journey through our dashboard</span></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="card" id="registration-card">
+                <h2 data-translate="register_title">📝 Register for Challenge</h2>
+                <div id="alert-container"></div>
+                <form id="registration-form">
+                    <div class="form-group">
+                        <label for="full-name" data-translate="full_name">Full Name *</label>
+                        <input type="text" id="full-name" name="full_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" data-translate="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="github" data-translate="github">GitHub Username (Optional)</label>
+                        <input type="text" id="github" name="github_username">
+                    </div>
+                    <div class="form-group">
+                        <label for="experience" data-translate="experience">Python Experience Level *</label>
+                        <select id="experience" name="experience_level" required>
+                            <option value="" data-translate="select_level">Select your level</option>
+                            <option value="beginner" data-translate="beginner">Beginner</option>
+                            <option value="intermediate" data-translate="intermediate">Intermediate</option>
+                            <option value="advanced" data-translate="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" data-translate="join_challenge">Join the Challenge</button>
+                </form>
+            </div>
+
+            <div class="card" id="submission-card">
+                <h2 data-translate="submit_title">📤 Submit Daily Task</h2>
+                <div id="submission-alert-container"></div>
+                <form id="submission-form">
+                    <div class="form-group">
+                        <label for="participant-email" data-translate="your_email">Your Email *</label>
+                        <input type="email" id="participant-email" name="participant_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-day" data-translate="task_day">Task Day *</label>
+                        <select id="task-day" name="task_day" required>
+                            <option value="" data-translate="select_day">Select day</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="solution" data-translate="solution">Your Solution *</label>
+                        <textarea id="solution" name="solution" rows="8" data-translate="solution_placeholder" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="explanation" data-translate="explanation">Explanation (Optional)</label>
+                        <textarea id="explanation" name="explanation" rows="4" data-translate="explanation_placeholder"></textarea>
+                    </div>
+                    <button type="submit" class="btn" data-translate="submit_solution">Submit Solution</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="dashboard" id="dashboard">
+            <div class="card">
+                <h2 data-translate="progress_title">📊 Your Progress</h2>
+                <div id="progress-content">
+                    <div class="form-group">
+                        <label for="dashboard-email" data-translate="enter_email">Enter your email to view progress:</label>
+                        <input type="email" id="dashboard-email" data-translate="email_placeholder">
+                        <button onclick="loadProgress()" class="btn" style="margin-top: 10px;" data-translate="load_progress">Load Progress</button>
+                    </div>
+                    <div id="progress-display" style="display: none;">
+                        <div id="progress-stats"></div>
+                        <div id="task-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            const challengeStart = new Date('2025-07-23T00:00:00');
+            const now = new Date();
+            const diff = challengeStart - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            } else {
+                document.getElementById('countdown').innerHTML = '<h2>Challenge is Live! 🚀</h2>';
+            }
+        }
+
+        // Initialize countdown
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Populate task days
+        function populateTaskDays() {
+            const taskDaySelect = document.getElementById('task-day');
+            const startDate = new Date('2025-07-23');
+            
+            for (let i = 1; i <= 30; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i - 1);
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Day ${i} (${currentDate.toLocaleDateString()})`;
+                taskDaySelect.appendChild(option);
+            }
+        }
+
+        populateTaskDays();
+
+        // Alert functions
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Registration form handler
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('alert-container', 'Registration successful! Welcome to the challenge!', 'success');
+                    e.target.reset();
+                } else {
+                    const error = await response.json();
+                    showAlert('alert-container', error.detail || 'Registration failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                showAlert('alert-container', 'Network error. Please check your connection and try again.', 'error');
+            }
+        });
+
+        // Submission form handler
+        document.getElementById('submission-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('submission-alert-container', 'Solution submitted successfully!', 'success');
+                    e.target.reset();
+                } else {
+                    const error = await response.json();
+                    showAlert('submission-alert-container', error.detail || 'Submission failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                showAlert('submission-alert-container', 'Network error. Please check your connection and try again.', 'error');
+            }
+        });
+
+        // Progress loading function
+        async function loadProgress() {
+            const email = document.getElementById('dashboard-email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/progress/${email}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    displayProgress(data);
+                } else {
+                    alert('Failed to load progress. Please check your email and try again.');
+                }
+            } catch (error) {
+                alert('Network error. Please check your connection and try again.');
+            }
+        }
+
+        // Display progress function
+        function displayProgress(data) {
+            const progressDisplay = document.getElementById('progress-display');
+            const progressStats = document.getElementById('progress-stats');
+            const taskList = document.getElementById('task-list');
+
+            progressStats.innerHTML = `
+                <h3>📈 Your Statistics</h3>
+                <p><strong>Total Tasks:</strong> ${data.total_tasks}</p>
+                <p><strong>Completed:</strong> ${data.completed_tasks}</p>
+                <p><strong>Pending:</strong> ${data.pending_tasks}</p>
+                <p><strong>Late Submissions:</strong> ${data.late_submissions}</p>
+            `;
+
+            taskList.innerHTML = '<h3>📋 Task Status</h3>';
+            data.tasks.forEach(task => {
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
+                taskCard.innerHTML = `
+                    <h4>Day ${task.day}</h4>
+                    <p><strong>Deadline:</strong> ${task.deadline}</p>
+                    <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
+                    ${task.submitted_at ? `<p><small>Submitted: ${task.submitted_at}</small></p>` : ''}
+                `;
+                taskList.appendChild(taskCard);
+            });
+
+            progressDisplay.style.display = 'block';
+        }
+
+        // Add navigation (you can enhance this)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any additional initialization here
+        });
+    </script>
+</body>
+</html>
