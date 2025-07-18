@@ -2,7 +2,7 @@
         // Language translations
         const translations = {
             en: {
-                challenge_title: "30-Day Python Challenge",
+                challenge_title: "30 Days of Python Challenge",
                 challenge_subtitle: "Join us for an intensive Python learning journey leading to PyCon Togo 2025",
                 countdown_title: "Challenge Starts In:",
                 days: "Days",
@@ -17,7 +17,7 @@
                 daily_tasks: "Daily Tasks:",
                 daily_tasks_text: "From beginner to advanced Python concepts",
                 strict_deadlines: "Strict Deadlines:",
-                strict_deadlines_text: "Each task must be submitted by 11:59 PM local time",
+                strict_deadlines_text: "Each task must be submitted by 11:59 PM GMT",
                 progress_tracking: "Progress Tracking:",
                 progress_tracking_text: "Monitor your journey through our dashboard",
                 register_title: "📝 Register for Challenge",
@@ -75,7 +75,7 @@
                 daily_tasks: "Tâches Quotidiennes:",
                 daily_tasks_text: "Des concepts Python débutant à avancé",
                 strict_deadlines: "Délais Stricts:",
-                strict_deadlines_text: "Chaque tâche doit être soumise avant 23h59 heure locale",
+                strict_deadlines_text: "Chaque tâche doit être soumise avant 23h59 GMT",
                 progress_tracking: "Suivi des Progrès:",
                 progress_tracking_text: "Surveillez votre parcours via notre tableau de bord",
                 register_title: "📝 S'inscrire au Défi",
@@ -166,7 +166,7 @@
 
         // Countdown Timer
         function updateCountdown() {
-            const challengeStart = new Date('2025-07-21T00:00:00');
+            const challengeStart = new Date('2025-07-23T00:00:00');
             const now = new Date();
             const diff = challengeStart - now;
 
@@ -280,9 +280,16 @@
             }
 
             try {
-                const response = await fetch(`/api/progress/${email}`);
+                const response = await fetch(`/api/progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({"participant_email": email})
+                });
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data);
                     displayProgress(data);
                 } else {
                     alert(translations[currentLanguage].progress_load_failed);
@@ -496,7 +503,7 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #056d1e 0%, #764ba2 100%);
+            background:#056d1e;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -554,7 +561,7 @@
         }
 
         .dashboard {
-            display: none;
+            
         }
 
         .dashboard.active {
@@ -672,13 +679,13 @@
         </div>
 
         <div class="header">
-            
-            <h1> <img src="static/images/logo.png" alt=""><span data-translate="challenge_title">30-Day Python Challenge</span></h1>
+
+            <h1> <img src="https://res.cloudinary.com/dvg7vky5o/image/upload/v1744083253/Py_owbvez.png" alt="" width="100"><span data-translate="challenge_title">30 Days of Python Challenge</span></h1>
             <p data-translate="challenge_subtitle">Join us for an intensive Python learning journey leading to PyCon Togo 2025</p>
         </div>
 
         <div class="countdown">
-            <h2 data-translate="countdown_title">Challenge Starts In:</h2>
+            <h2 data-translate="countdown_title" id="countdown-title">Challenge Starts In:</h2>
             <div class="countdown-timer" id="countdown">
                 <div class="time-unit">
                     <span class="number" id="days">00</span>
@@ -705,13 +712,13 @@
                 <li><strong data-translate="duration">Duration:</strong> <span data-translate="duration_text">July 23, 2025 - August 21, 2025 (30 days)</span></li>
                 <li><strong data-translate="prize_ceremony">Prize Ceremony:</strong> <span data-translate="prize_ceremony_text">PyCon Togo 2025 - August 23, 2025</span></li>
                 <li><strong data-translate="daily_tasks">Daily Tasks:</strong> <span data-translate="daily_tasks_text">From beginner to advanced Python concepts</span></li>
-                <li><strong data-translate="strict_deadlines">Strict Deadlines:</strong> <span data-translate="strict_deadlines_text">Each task must be submitted by 11:59 PM local time</span></li>
+                <li><strong data-translate="strict_deadlines">Strict Deadlines:</strong> <span data-translate="strict_deadlines_text">Each task must be submitted by 11:59 PM GMT</span></li>
                 <li><strong data-translate="progress_tracking">Progress Tracking:</strong> <span data-translate="progress_tracking_text">Monitor your journey through our dashboard</span></li>
             </ul>
         </div>
 
         <div class="main-content">
-            <div class="card" id="registration-card">
+            <div class="card" id="registration-card" >
                 <h2 data-translate="register_title">📝 Register for Challenge</h2>
                 <div id="alert-container"></div>
                 <form id="registration-form">
@@ -740,7 +747,7 @@
                 </form>
             </div>
 
-            <div class="card" id="submission-card">
+            <div class="card" id="submission-card" >
                 <h2 data-translate="submit_title">📤 Submit Daily Task</h2>
                 <div id="submission-alert-container"></div>
                 <form id="submission-form">
@@ -762,7 +769,7 @@
                         <label for="explanation" data-translate="explanation">Explanation (Optional)</label>
                         <textarea id="explanation" name="explanation" rows="4" data-translate="explanation_placeholder"></textarea>
                     </div>
-                    <button type="submit" class="btn" data-translate="submit_solution">Submit Solution</button>
+                    <button type="submit" class="btn" id="submit_btn" data-translate="submit_solution" >Submit Solution</button>
                 </form>
             </div>
         </div>
@@ -788,7 +795,10 @@
     <script>
         // Countdown Timer
         function updateCountdown() {
+            //  disable the submit button if the challenge has started
+            const submitButton = document.getElementById('submit_btn');
             const challengeStart = new Date('2025-07-23T00:00:00');
+           
             const now = new Date();
             const diff = challengeStart - now;
 
@@ -802,8 +812,14 @@
                 document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
                 document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
                 document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+                submitButton.disabled = true;
+                document.getElementById('dashboard').style.display = 'none';
             } else {
-                document.getElementById('countdown').innerHTML = '<h2>Challenge is Live! 🚀</h2>';
+                document.getElementById('countdown-title').style.display = 'none';
+                document.getElementById('countdown').innerHTML = '<h2>Challenge is Live! </h2>';
+                submitButton.disabled = false;
+                document.getElementById('dashboard').style.display = 'block';
             }
         }
 
@@ -844,6 +860,7 @@
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
             
+            
             try {
                 const response = await fetch('/api/register', {
                     method: 'POST',
@@ -871,6 +888,7 @@
             
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            
             
             try {
                 const response = await fetch('/api/submit', {
@@ -902,9 +920,18 @@
             }
 
             try {
-                const response = await fetch(`/api/progress/${email}`);
+                const response = await fetch(`/api/progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({"participant_email": email})
+                });
+                    
+                
                 if (response.ok) {
                     const data = await response.json();
+                    
                     displayProgress(data);
                 } else {
                     alert('Failed to load progress. Please check your email and try again.');
@@ -934,9 +961,9 @@
                 taskCard.className = 'task-card';
                 taskCard.innerHTML = `
                     <h4>Day ${task.day}</h4>
-                    <p><strong>Deadline:</strong> ${task.deadline}</p>
-                    <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
-                    ${task.submitted_at ? `<p><small>Submitted: ${task.submitted_at}</small></p>` : ''}
+                    <p><strong>Title:</strong> ${task.title}</p>
+                    <p><strong>Description:</strong> ${task.description}</p>
+                    <p><strong>Deadline:</strong> ${new Date(task.deadline).toLocaleDateString()}</p>
                 `;
                 taskList.appendChild(taskCard);
             });

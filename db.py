@@ -26,8 +26,9 @@ def insert_into_table(table_name: str, data: dict):
         dict: The inserted record or an error message if the insertion fails.
     """
     response = supabase.table(table_name).insert(data).execute()
-    if response.error:
-        return {"error": response.error.message}
+    print(response)
+    if not response:
+        return {"error": "Insertion failed"}
     return response.data[0] if response.data else {}
 
 def update_table(table_name: str, record_id: int, data: dict):
