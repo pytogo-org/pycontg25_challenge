@@ -12,7 +12,7 @@ from pydantic import BaseModel, EmailStr
 # from typing import Optional, List
 # from datetime import datetime, timedelta
 from contextlib import contextmanager
-from models import  ParticipantRegistration, TaskSubmission, TaskInfo
+from models import  ParticipantRegistration, ProgressInfo, TaskSubmission, TaskInfo
 from db import insert_into_table, get_some_thing, get_some_where, get_record_by_email, get_record_by_email
 
 app = FastAPI(title="30-Day Python Challenge API", version="1.0.0")
@@ -80,6 +80,7 @@ async def register_participant(participant: ParticipantRegistration):
         inserted_record = insert_into_table("participants", data)
         return {"message": "Participant registered successfully", "participant": inserted_record}
     except Exception as e:
+        print(f"Error inserting participant: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
 
 
@@ -90,9 +91,9 @@ async def submit_task(submission: TaskSubmission):
     if not is_participant:
         raise HTTPException(status_code=404, detail="Participant not found. Please register first.")
 
-    task = get_some_thing("tasks")
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+    # task = get_some_thing("tasks")
+    # if not task:
+    #     raise HTTPException(status_code=404, detail="Task not found")
 
     existing_submission = get_some_where("submissions", "participant_email", submission.participant_email, "task_day", submission.task_day)
     if existing_submission:
@@ -106,22 +107,45 @@ async def submit_task(submission: TaskSubmission):
         raise HTTPException(status_code=500, detail="Database error occurred")
 
 
-@app.get("/api/progress/{email}")
-async def get_progress(email: str):
+@app.post("/api/progress")
+async def get_progress(progress: ProgressInfo):
     """Get progress for a specific participant"""
-    participant = get_record_by_email("participants", email)
+    print(progress.participant_email)
+    participant = get_record_by_email("participants", progress.participant_email)
     if not participant:
         raise HTTPException(status_code=404, detail="Participant not found")
 
     tasks = get_some_thing("tasks")
-    submissions = get_record_by_email("submissions", email)
+    submissions = get_record_by_email("submissions", progress.participant_email)
+
+    print(submissions.get("3"))
 
     task_progress = []
     for task in tasks:
-        submission = submissions.get(task.day)
-        task_progress.append({
-            "task": task,
-            "submission": submission
-        })
+        task_day = task.get("day")
+        submission = submissions.get(str(task_day))
+        if submission:
+            task_progress.append({
+                "day": task_day,
+                "title": task.get("title"),
+                "status": "submitted",
+                "solution": submission.get("solution"),
+                "explanation": submission.get("explanation")
+            })
+        else:
+            task_progress.append({
+                "day": task_day,
+                "title": task.get("title"),
+                "status": "not submitted"
+            })
+
+            stat_count = {
+                "total_tasks": len(tasks),
+                "tasks": tasks,
+                "completed_tasks": sum(1 for task in task_progress if task["status"] == "submitted"),
+                "pending_tasks": sum(1 for task in task_progress if task["status"] == "not submitted"),
+                "late_submissions": sum(1 for task in task_progress if task["status"] == "not submitted" and task.get("deadline") < "2023-10-31")
+            }
+
 
     return {"progress": task_progress}

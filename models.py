@@ -19,3 +19,6 @@ class TaskInfo(BaseModel):
     description: str = Field(..., description="Description of the Task")
     deadline: str = Field(..., description="Deadline for the Task")
     difficulty: str = Field(..., description="Difficulty Level of the Task")
+
+class ProgressInfo(BaseModel):
+    participant_email: str = Field(..., description="Email of the Participant")
