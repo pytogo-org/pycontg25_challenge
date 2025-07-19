@@ -1,17 +1,17 @@
 import typing
 
+from send_mail import send_welcome_email
+
 if not hasattr(typing, "_ClassVar") and hasattr(typing, "ClassVar"):
     typing._ClassVar = typing.ClassVar
 
 
+from email_template import render_email_template
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, EmailStr
-# from typing import Optional, List
-# from datetime import datetime, timedelta
-from contextlib import contextmanager
+# from send_mail import  send_welcome_email
 from models import  ParticipantRegistration, ProgressInfo, TaskSubmission, TaskInfo
 from db import insert_into_table, get_some_thing, get_some_where, get_record_by_email, get_record_by_email
 
@@ -78,10 +78,22 @@ async def register_participant(participant: ParticipantRegistration):
     try:
         data = participant.dict()
         inserted_record = insert_into_table("participants", data)
+        print("before sending email")
+        if inserted_record:
+            print(f"Participant {participant.full_name} registered successfully.")
+            try:
+                send_welcome_email(first_name=participant.full_name, participant_email=participant.email)
+                print(f"Welcome email sent to {participant.email}")
+            except Exception as e:
+                print(f"Error sending welcome email: {e}")
+                raise HTTPException(status_code=500, detail="Failed to send welcome email")
+        else:
+            raise HTTPException(status_code=500, detail="Failed to register participant")
+
         return {"message": "Participant registered successfully", "participant": inserted_record}
     except Exception as e:
         print(f"Error inserting participant: {e}")
-        raise HTTPException(status_code=500, detail="Database error occurred")
+        raise HTTPException(status_code=500, detail="User already exists")
 
 
 @app.post("/api/submit")
