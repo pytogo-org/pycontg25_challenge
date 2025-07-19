@@ -29,7 +29,7 @@ def insert_into_table(table_name: str, data: dict):
     print(response)
     if not response:
         return {"error": "Insertion failed"}
-    return response.data[0] if response.data else {}
+    return True if response.data else False
 
 def update_table(table_name: str, record_id: int, data: dict):
     """
