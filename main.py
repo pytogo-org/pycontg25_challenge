@@ -1,21 +1,34 @@
-import typing
 
-from send_mail import send_welcome_email
+import os
+import typing
 
 if not hasattr(typing, "_ClassVar") and hasattr(typing, "ClassVar"):
     typing._ClassVar = typing.ClassVar
 
-
+import json
+from time import timezone
+from send_mail import send_welcome_email
 from email_template import render_email_template
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-# from send_mail import  send_welcome_email
+from datetime import datetime, timedelta, timezone
 from models import  ParticipantRegistration, ProgressInfo, TaskSubmission, TaskInfo
 from db import insert_into_table, get_some_thing, get_some_where, get_record_by_email, get_record_by_email
+from dotenv import load_dotenv
+from routes.cron import router as cron_router
 
+load_dotenv()
+
+challenge_start_date = datetime(2025, 7, 20, 0, 0, 0)
 app = FastAPI(title="30-Day Python Challenge API", version="1.0.0")
+app.include_router(cron_router, prefix="/api/cron", tags=["Cron Jobs"])
+API_ROOT = os.environ.get("API_ROOT")
+
+token_url = f"{API_ROOT}/token"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=token_url)
 
 # CORS middleware
 app.add_middleware(
@@ -29,38 +42,43 @@ app.add_middleware(
 
 def populate_tasks():
     """Populate the tasks table with 30 days of challenges"""
-    tasks_data = [
-        (1, "Hello Python", "Write a program that prints 'Hello, World!' and your name", "beginner"),
-        (2, "Variables and Data Types", "Create variables of different data types and print their types", "beginner"),
-        (3, "User Input", "Write a program that asks for user's name and age, then greets them", "beginner"),
-        (4, "Basic Arithmetic", "Create a simple calculator for basic operations", "beginner"),
-        (5, "Conditional Statements", "Write a program to check if a number is positive, negative, or zero", "beginner"),
-        (6, "Loops - For", "Print the first 10 numbers using a for loop", "beginner"),
-        (7, "Loops - While", "Create a number guessing game using while loop", "beginner"),
-        (8, "Lists", "Create a list of fruits and perform various operations", "beginner"),
-        (9, "Strings", "Write a program to reverse a string and count vowels", "beginner"),
-        (10, "Functions", "Create a function to check if a number is prime", "beginner"),
-        (11, "Dictionaries", "Create a phone book using dictionaries", "intermediate"),
-        (12, "File Handling", "Read and write data to a text file", "intermediate"),
-        (13, "Exception Handling", "Handle different types of exceptions in your code", "intermediate"),
-        (14, "List Comprehensions", "Use list comprehensions to filter and transform data", "intermediate"),
-        (15, "Classes and Objects", "Create a simple class for a bank account", "intermediate"),
-        (16, "Modules", "Create your own module and import it", "intermediate"),
-        (17, "Regular Expressions", "Use regex to validate email addresses", "intermediate"),
-        (18, "Working with APIs", "Fetch data from a public API using requests", "intermediate"),
-        (19, "Data Structures", "Implement a stack using lists", "intermediate"),
-        (20, "Algorithms", "Implement bubble sort algorithm", "intermediate"),
-        (21, "Decorators", "Create and use custom decorators", "advanced"),
-        (22, "Generators", "Create a generator for Fibonacci sequence", "advanced"),
-        (23, "Context Managers", "Create a custom context manager", "advanced"),
-        (24, "Multithreading", "Create a program using multiple threads", "advanced"),
-        (25, "Database Operations", "Perform CRUD operations with SQLite", "advanced"),
-        (26, "Web Scraping", "Scrape data from a website using BeautifulSoup", "advanced"),
-        (27, "Testing", "Write unit tests for your previous functions", "advanced"),
-        (28, "Data Analysis", "Analyze data using pandas (if available)", "advanced"),
-        (29, "Final Project Setup", "Plan and start your final project", "advanced"),
-        (30, "Final Project", "Complete and present your final project", "advanced"),
-    ]
+    # The deadline for each task is 23:59:59 of the day before the next task
+    # Example: task 1 = 2025-07-20 23:59:59, task 2 = 2025-07-21 23:59:59, etc.
+
+    with open("templates/tasks.json", "r") as file:
+        tasks = json.load(file)
+
+    for task in tasks:
+        day = task["day"]
+        deadline = challenge_start_date + timedelta(days=day)
+        task_start_at = challenge_start_date + timedelta(days=day - 1)
+        formate_task_start_at = task_start_at.strftime("%Y-%m-%d %H:%M:%S")
+        task["start_at"] = formate_task_start_at
+        formatted_deadline = deadline.strftime("%Y-%m-%d %H:%M:%S")
+        task["deadline"] = formatted_deadline
+        inserted = insert_into_table("tasks", task)
+        task_info = TaskInfo(
+            day=day,
+            title_en=task["title_en"],
+            title_fr=task["title_fr"],
+            link_fr=task.get("link_fr"),
+            link_en=task.get("link_en"),
+            difficulty=(
+                "Beginner" if day <= 10 else
+                "Intermediate" if day <= 20 else
+                "Advanced"
+            ),
+            deadline=formatted_deadline
+        )
+
+        try:
+            
+            if inserted:
+                print(f"Task for day {day} inserted successfully.")
+            else:
+                print(f"Failed to insert task for day {day}.")
+        except Exception as e:
+            print(f"Error inserting task for day {day}: {e}")
     
 
 
@@ -93,13 +111,16 @@ async def register_participant(participant: ParticipantRegistration):
         return {"message": "Participant registered successfully", "participant": inserted_record}
     except Exception as e:
         print(f"Error inserting participant: {e}")
-        raise HTTPException(status_code=500, detail="User already exists")
+        raise HTTPException(status_code=500, detail="Participant already exists")
 
 
 @app.post("/api/submit")
 async def submit_task(submission: TaskSubmission):
     """Submit a solution for a specific task"""
     is_participant = get_record_by_email("participants", submission.participant_email)
+
+    print(f"Participant exists: {is_participant}")
+    
     if not is_participant:
         raise HTTPException(status_code=404, detail="Participant not found. Please register first.")
 
@@ -112,6 +133,8 @@ async def submit_task(submission: TaskSubmission):
         raise HTTPException(status_code=400, detail="Task already submitted")
 
     try:
+        # type coverting the task_day to int
+        submission.task_day = int(submission.task_day)
         data = submission.dict()
         inserted_record = insert_into_table("submissions", data)
         return {"message": "Task submitted successfully", "submission": inserted_record}
@@ -122,7 +145,7 @@ async def submit_task(submission: TaskSubmission):
 @app.post("/api/progress")
 async def get_progress(progress: ProgressInfo):
     """Get progress for a specific participant"""
-    print(progress.participant_email)
+    now = datetime.now(timezone.utc)
     participant = get_record_by_email("participants", progress.participant_email)
     if not participant:
         raise HTTPException(status_code=404, detail="Participant not found")
@@ -130,34 +153,53 @@ async def get_progress(progress: ProgressInfo):
     tasks = get_some_thing("tasks")
     submissions = get_record_by_email("submissions", progress.participant_email)
 
-    print(submissions.get("3"))
+    submissions = [{
+        "task_day": 1,
+        "solution": 'Solution for task 1',
+        "explanation": 'Explanation for task 1'
+    }]
 
     task_progress = []
     for task in tasks:
         task_day = task.get("day")
-        submission = submissions.get(str(task_day))
+
+        submission = next((s for s in submissions if s.get("task_day") == task_day), None)
+
         if submission:
             task_progress.append({
                 "day": task_day,
-                "title": task.get("title"),
+                "title_en": task.get("title_en"),
                 "status": "submitted",
                 "solution": submission.get("solution"),
-                "explanation": submission.get("explanation")
+                "explanation": submission.get("explanation"),
+                "deadline": datetime.fromisoformat(task["deadline"]).isoformat(),
+                "has_started": True if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else False
             })
         else:
+            # cast deadline to datetime 
+            
             task_progress.append({
                 "day": task_day,
-                "title": task.get("title"),
-                "status": "not submitted"
+                "title_en": task.get("title_en"),
+                "status": "in progress" if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else "not submitted",
+                "deadline": datetime.fromisoformat(task["deadline"]).isoformat(),
+                "has_started": True if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else False
             })
 
             stat_count = {
                 "total_tasks": len(tasks),
-                "tasks": tasks,
+                "tasks": [task for task in task_progress if task["has_started"]],
+                "total_submissions": len(submissions),
                 "completed_tasks": sum(1 for task in task_progress if task["status"] == "submitted"),
+                "in_progress_tasks": sum(1 for task in task_progress if task["status"] == "in progress"),
                 "pending_tasks": sum(1 for task in task_progress if task["status"] == "not submitted"),
-                "late_submissions": sum(1 for task in task_progress if task["status"] == "not submitted" and task.get("deadline") < "2023-10-31")
+                "late_submissions": sum(1 for task in task_progress if task["status"] == "not submitted" and task.get("deadline") < now.isoformat())
             }
 
 
-    return {"progress": task_progress}
+    return {"progress": task_progress, "stats": stat_count}
+
+if __name__ == "__main__":
+    # Populate tasks in the database
+    # populate_tasks()
+    pass

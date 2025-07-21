@@ -26,7 +26,6 @@ def insert_into_table(table_name: str, data: dict):
         dict: The inserted record or an error message if the insertion fails.
     """
     response = supabase.table(table_name).insert(data).execute()
-    print(response)
     if not response:
         return {"error": "Insertion failed"}
     return True if response.data else False
@@ -59,7 +58,11 @@ def get_record_by_email(table_name: str, email: str):
     Returns:
         dict: The record with the specified email or None if not found.
     """
-    response = supabase.table(table_name).select("*").eq("email", email).execute()
+    if table_name not in ["submissions"]:
+        response = supabase.table(table_name).select("*").eq("email", email).execute()
+    else:
+        response = supabase.table(table_name).select("*").eq("participant_email", email).execute()
+
     return response.data[0] if response.data else None
 
 def get_some_where(table_name: str, column1: str, value1: str, column2: str, value2: str):
@@ -78,4 +81,32 @@ def get_some_where(table_name: str, column1: str, value1: str, column2: str, val
     """
     response = supabase.table(table_name).select("*").eq(column1, value1).eq(column2, value2).execute()
     return response.data if response.data else []
+
+def log_email_sent(participant_email: str, day_number: int):
+    """
+    Logs that an email has been sent to a participant for a specific day.
+
+    Args:
+        participant_email (str): The email of the participant.
+        day_number (int): The day number of the challenge.
+    """
+    data = {
+        "participant_email": participant_email,
+        "day_number": day_number
+    }
+    insert_into_table("emails_sent", data)
+
+def check_already_sent(participant_email: str, day_number: int):
+    """
+    Checks if an email has already been sent to a participant for a specific day.
+
+    Args:
+        participant_email (str): The email of the participant.
+        day_number (int): The day number of the challenge.
+
+    Returns:
+        bool: True if the email has already been sent, False otherwise.
+    """
+    response = get_some_where("emails_sent", "participant_email", participant_email, "day_number", day_number)
+    return len(response) > 0
     

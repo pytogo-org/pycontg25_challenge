@@ -34,8 +34,8 @@
                 your_email: "Your Email *",
                 task_day: "Task Day *",
                 select_day: "Select day",
-                solution: "Your Solution *",
-                solution_placeholder: "Paste your Python code here...",
+                solution: "Your Solution / Link / URL / code*",
+                solution_placeholder: "Paste your Python code or link here...",
                 explanation: "Explanation (Optional)",
                 explanation_placeholder: "Explain your approach...",
                 submit_solution: "Submit Solution",
@@ -92,8 +92,8 @@
                 your_email: "Votre Email *",
                 task_day: "Jour de la Tâche *",
                 select_day: "Sélectionnez le jour",
-                solution: "Votre Solution *",
-                solution_placeholder: "Collez votre code Python ici...",
+                solution: "Votre Solution / Lien / URL / code *",
+                solution_placeholder: "Collez votre code Python ou lien ici...",
                 explanation: "Explication (Optionnel)",
                 explanation_placeholder: "Expliquez votre approche...",
                 submit_solution: "Soumettre la Solution",
@@ -192,7 +192,7 @@
         // Populate task days
         function populateTaskDays() {
             const taskDaySelect = document.getElementById('task-day');
-            const startDate = new Date('2025-07-21');
+            const startDate = new Date('2025-07-23T00:00:00');
             
             for (let i = 1; i <= 30; i++) {
                 const currentDate = new Date(startDate);
@@ -274,6 +274,7 @@
         // Progress loading function
         async function loadProgress() {
             const email = document.getElementById('dashboard-email').value;
+            console.log(email);
             if (!email) {
                 alert(translations[currentLanguage].enter_email_alert);
                 return;
@@ -289,13 +290,14 @@
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
+                    
                     displayProgress(data);
                 } else {
                     alert(translations[currentLanguage].progress_load_failed);
                 }
             } catch (error) {
-                alert(translations[currentLanguage].network_error);
+                console.error('Network error:', error);
+                alert(error);
             }
         }
 
@@ -305,29 +307,32 @@
             const progressStats = document.getElementById('progress-stats');
             const taskList = document.getElementById('task-list');
 
+            
+            stats = data.stats;
             progressStats.innerHTML = `
                 <h3>📈 ${translations[currentLanguage].progress_title.replace('📊 ', '')}</h3>
-                <p><strong>${translations[currentLanguage].total_tasks}</strong> ${data.total_tasks}</p>
-                <p><strong>${translations[currentLanguage].completed}</strong> ${data.completed_tasks}</p>
-                <p><strong>${translations[currentLanguage].pending}</strong> ${data.pending_tasks}</p>
-                <p><strong>${translations[currentLanguage].late_submissions}</strong> ${data.late_submissions}</p>
+                <p><strong>${translations[currentLanguage].total_tasks}</strong> ${stats.total_tasks}</p>
+                <p><strong>${translations[currentLanguage].completed}</strong> ${stats.completed_tasks}</p>
+                <p><strong>${translations[currentLanguage].pending}</strong> ${stats.pending_tasks}</p>
+                <p><strong>${translations[currentLanguage].late_submissions}</strong> ${stats.late_submissions}</p>
             `;
+           
 
-            taskList.innerHTML = `<h3>${translations[currentLanguage].task_status}</h3>`;
-            data.tasks.forEach(task => {
-                const taskCard = document.createElement('div');
-                taskCard.className = 'task-card';
-                taskCard.innerHTML = `
-                    <h4>Day ${task.day}</h4>
-                    <p><strong>${translations[currentLanguage].deadline}</strong> ${task.deadline}</p>
-                    <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
-                    ${task.submitted_at ? `<p><small>${translations[currentLanguage].submitted} ${task.submitted_at}</small></p>` : ''}
-                `;
-                taskList.appendChild(taskCard);
-            });
+            //taskList.innerHTML = `<h3>${translations[currentLanguage].task_status}</h3>`;
+            //data.tasks.forEach(task => {
+            //    const taskCard = document.createElement('div');
+            //    taskCard.className = 'task-card';
+            //    taskCard.innerHTML = `
+            //        <h4>Day ${task.day}</h4>
+            //        <p><strong>${translations[currentLanguage].deadline}</strong> ${task.deadline}</p>
+            //        <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
+            //        ${task.submitted_at ? `<p><small>${translations[currentLanguage].submitted} ${task.submitted_at}</small></p>` : ''}
+            //    `;
+            //    taskList.appendChild(taskCard);
+            //});
 
-                // progressDisplay
             }
+             progressDisplay.style.display = 'block';
             </script>
 
     
@@ -728,16 +733,16 @@
                 <div id="alert-container"></div>
                 <form id="registration-form">
                     <div class="form-group">
-                        <label for="full-name" data-translate="full_name">Full Name *</label>
-                        <input type="text" id="full-name" name="full_name" required>
+                        <label for="full-name" data-translate="full_name" >Full Name *</label>
+                        <input type="text" id="full-name" name="full_name" placeholder="Enter your full name" required>
                     </div>
                     <div class="form-group">
                         <label for="email" data-translate="email">Email Address *</label>
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
                         <label for="github" data-translate="github">GitHub Username (Optional)</label>
-                        <input type="text" id="github" name="github_username">
+                        <input type="text" id="github" name="github_username" placeholder="Enter your GitHub username">
                     </div>
                     <div class="form-group">
                         <label for="experience" data-translate="experience">Python Experience Level *</label>
@@ -758,7 +763,7 @@
                 <form id="submission-form">
                     <div class="form-group">
                         <label for="participant-email" data-translate="your_email">Your Email *</label>
-                        <input type="email" id="participant-email" name="participant_email" required>
+                        <input type="email" id="participant-email" name="participant_email"  placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
                         <label for="task-day" data-translate="task_day">Task Day *</label>
@@ -768,11 +773,11 @@
                     </div>
                     <div class="form-group">
                         <label for="solution" data-translate="solution">Your Solution *</label>
-                        <textarea id="solution" name="solution" rows="8" data-translate="solution_placeholder" required></textarea>
+                        <textarea id="solution" name="solution" rows="8" data-translate="solution_placeholder" placeholder="Paste your Python code or link here..." required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="explanation" data-translate="explanation">Explanation (Optional)</label>
-                        <textarea id="explanation" name="explanation" rows="4" data-translate="explanation_placeholder"></textarea>
+                        <textarea id="explanation" name="explanation" rows="4" data-translate="explanation_placeholder" placeholder="Provide an explanation for your solution (optional)"></textarea>
                     </div>
                     <button type="submit" class="btn" id="submit_btn" data-translate="submit_solution" >Submit Solution</button>
                 </form>
@@ -788,7 +793,7 @@
                         <input type="email" id="dashboard-email" data-translate="email_placeholder">
                         <button onclick="loadProgress()" class="btn" style="margin-top: 10px;" data-translate="load_progress">Load Progress</button>
                     </div>
-                    <div id="progress-display" style="display: none;">
+                    <div id="progress-display" style="">
                         <div id="progress-stats"></div>
                         <div id="task-list"></div>
                     </div>
@@ -835,14 +840,20 @@
         // Populate task days
         function populateTaskDays() {
             const taskDaySelect = document.getElementById('task-day');
-            const startDate = new Date('2025-07-23');
-            
+            const startDate = new Date('2025-07-23T00:00:00Z'); // Challenge starts on July 20, 2025
+
             for (let i = 1; i <= 30; i++) {
                 const currentDate = new Date(startDate);
                 currentDate.setDate(startDate.getDate() + i - 1);
                 const option = document.createElement('option');
                 option.value = i;
                 option.textContent = `Day ${i} (${currentDate.toLocaleDateString()})`;
+                const now = new Date();
+                const endOfChallengeDay = new Date(currentDate);
+                endOfChallengeDay.setHours(23, 59, 59, 999);
+                if (now > endOfChallengeDay) {
+                    option.disabled = true; // Disable options for days after the challenge ends
+                }
                 taskDaySelect.appendChild(option);
             }
         }
@@ -916,70 +927,7 @@
             }
         });
 
-        // Progress loading function
-        async function loadProgress() {
-            const email = document.getElementById('dashboard-email').value;
-            if (!email) {
-                alert('Please enter your email address');
-                return;
-            }
 
-            try {
-                const response = await fetch(`/api/progress`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({"participant_email": email})
-                });
-                    
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    displayProgress(data);
-                } else {
-                    alert('Failed to load progress. Please check your email and try again.');
-                }
-            } catch (error) {
-                alert('Network error. Please check your connection and try again.');
-            }
-        }
-
-        // Display progress function
-        function displayProgress(data) {
-            const progressDisplay = document.getElementById('progress-display');
-            const progressStats = document.getElementById('progress-stats');
-            const taskList = document.getElementById('task-list');
-
-            progressStats.innerHTML = `
-                <h3>📈 Your Statistics</h3>
-                <p><strong>Total Tasks:</strong> ${data.total_tasks}</p>
-                <p><strong>Completed:</strong> ${data.completed_tasks}</p>
-                <p><strong>Pending:</strong> ${data.pending_tasks}</p>
-                <p><strong>Late Submissions:</strong> ${data.late_submissions}</p>
-            `;
-
-            taskList.innerHTML = '<h3>📋 Task Status</h3>';
-            data.tasks.forEach(task => {
-                const taskCard = document.createElement('div');
-                taskCard.className = 'task-card';
-                taskCard.innerHTML = `
-                    <h4>Day ${task.day}</h4>
-                    <p><strong>Title:</strong> ${task.title}</p>
-                    <p><strong>Description:</strong> ${task.description}</p>
-                    <p><strong>Deadline:</strong> ${new Date(task.deadline).toLocaleDateString()}</p>
-                `;
-                taskList.appendChild(taskCard);
-            });
-
-            progressDisplay.style.display = 'block';
-        }
-
-        // Add navigation (you can enhance this)
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add any additional initialization here
-        });
     </script>
 </body>
 </html>
