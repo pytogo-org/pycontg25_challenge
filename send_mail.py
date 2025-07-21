@@ -61,93 +61,118 @@ def send_welcome_email(first_name="Pythonista", participant_email=None):
         send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
 
 
+def send_daily_email(first_name, day_number, fr_title, en_title, fr_link, en_link, participant_email=None):
+    """
+    Sends the daily challenge email to the participant.
+    """
+    from welcome import get_daily_challenge_email
+    email_msgs = get_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
+    for email in email_msgs:
+        body = render_email_template(
+            first_name=first_name,
+            message=email['body']
+        )
+        subject = email['subject']
+        send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
+
+
 if __name__ == "__main__":
+    participants = [
+ {
+   "id": 5,
+   "full_name": "Wachiou BOURAIMA",
+   "email": "wachioubouraima56@gmail.com",
+   "github_username": "wass",
+   "registered_at": "2025-07-18 00:57:36.553598+00",
+   "experience_level": "intermediate"
+ },
+ {
+   "id": 6,
+   "full_name": "Uk'iva DAPAM",
+   "email": "ukiva.dapam@gmail.com",
+   "github_username": "@dukst0n",
+   "registered_at": "2025-07-18 05:47:55.833491+00",
+   "experience_level": "beginner"
+ },
+ {
+   "id": 7,
+   "full_name": "Moukitat LASSISI",
+   "email": "moukitatlassisi6@gmail.com",
+   "github_username": "Moukitat LASSISI",
+   "registered_at": "2025-07-18 06:45:03.603765+00",
+   "experience_level": "intermediate"
+ },
+ {
+   "id": 8,
+   "full_name": "DORVI Yao Théodore ",
+   "email": "tdorvi@gmail.com",
+   "github_username": "",
+   "registered_at": "2025-07-18 07:11:46.511461+00",
+   "experience_level": "intermediate"
+ },
+ {
+   "id": 10,
+   "full_name": "Jonas O'Keefe",
+   "email": "marguerite.welch@goldenmarine.net",
+   "github_username": "virtual",
+   "registered_at": "2025-07-18 08:11:54.399932+00",
+   "experience_level": "intermediate"
+ },
+ {
+   "id": 15,
+   "full_name": "Jasen Huel",
+   "email": "blake.hahn@goldenmarine.net",
+   "github_username": "lime",
+   "registered_at": "2025-07-18 08:20:54.713168+00",
+   "experience_level": "advanced"
+ },
+ {
+   "id": 20,
+   "full_name": "Geoffrey Logovi",
+   "email": "geoffreylogovi2@gmail.com",
+   "github_username": "geoffreylgv",
+   "registered_at": "2025-07-18 08:33:56.030493+00",
+   "experience_level": "beginner"
+ },
+ {
+   "id": 21,
+   "full_name": "KUMA Kossi Stéphane ",
+   "email": "kumastephane@gmail.com",
+   "github_username": "stephanekuma",
+   "registered_at": "2025-07-18 09:40:02.109802+00",
+   "experience_level": "beginner"
+ },
+ {
+   "id": 22,
+   "full_name": "AZIAGBENYO KOMLAN ELOM Laurent ",
+   "email": "laziagbenyo@gmail.com",
+   "github_username": "@Elom10Laurent",
+   "registered_at": "2025-07-18 11:34:15.576937+00",
+   "experience_level": "beginner"
+ },
+ {
+   "id": 33,
+   "full_name": "AGBOSSOUMONDE LUther",
+   "email": "luthermondey53@gmail.com",
+   "github_username": "lutherkingcp0",
+   "registered_at": "2025-07-18 15:06:02.027752+00",
+   "experience_level": "beginner"
+ },
+ {
+   "id": 53,
+   "full_name": "Samadou Ouro-agorouko ",
+   "email": "souroagorouko@gmail.com",
+   "github_username": "Bakugo90",
+   "registered_at": "2025-07-19 10:53:13.92151+00",
+   "experience_level": "intermediate"
+ }
+]
 
-    msg = """\
-        <h3>Version française</h3>
-        <p>
-        Félicitations ! Tu viens de t’inscrire au <strong>Challenge 30 Jours Python</strong> organisé par <strong>Python Togo</strong> en prélude à <strong>PyCon Togo 2025</strong>, prévu pour le 23 août.
-        </p>
-        <p>
-        <strong>Durée du challenge :</strong> du 23 juillet au 22 août à 23h59. <br>
-        Chaque jour, tu recevras un email contenant :
-        </p>
-        <ul>
-        <li>Le défi Python du jour</li>
-        <li>Des ressources pour t’aider à le résoudre</li>
-        <li>Un lien pour soumettre ta solution</li>
-        </ul>
-        <p>
-        <strong>Soumission :</strong> rends-toi sur notre plateforme 
-        <a href="https://pycon.tg/challenge2025">https://pycon.tg/challenge2025</a> et soumets :
-        </p>
-        <ul>
-        <li>Le lien vers ton code (GitHub, Replit, etc.)</li>
-        <li>Une brève explication de ta solution</li>
-        </ul>
-        <p>
-        <strong>Rejoins notre serveur Discord :</strong> 
-        <a href="https://pytogo.org/discord">https://pytogo.org/discord</a><br>
-        Une fois à l’intérieur :
-        </p>
-        <ul>
-        <li>Présente-toi dans le canal <code>#challenge-30jours</code></li>
-        <li>Signale que tu participes pour recevoir un rôle spécial</li>
-        <li>Reste actif pour profiter de l'entraide de la communauté</li>
-        </ul>
-        <p>
-        Tu as un serveur Discord ? N'hésite pas à nous le dire si tu veux collaborer avec nous.
-        </p>
-        <p>
-        Pour toute question ou assistance, écris-nous à <a href="mailto:support@pycon.tg">support@pycon.tg</a>.
-        </p>
-
-        <hr>
-
-        <h3>English version</h3>
-        <p>
-        Congratulations! You have successfully registered for the <strong>30-Day Python Challenge</strong> organized by <strong>Python Togo</strong>, in preparation for <strong>PyCon Togo 2025</strong>, taking place on August 23.
-        </p>
-        <p>
-        <strong>Challenge duration:</strong> from July 23 to August 22 at 11:59 PM UTC.<br>
-        Each day, you will receive an email containing:
-        </p>
-        <ul>
-        <li>The daily Python challenge</li>
-        <li>Helpful learning resources</li>
-        <li>A link to submit your solution</li>
-        </ul>
-        <p>
-        <strong>Submission:</strong> go to 
-        <a href="https://pycon.tg/challenge2025">https://pycon.tg/challenge2025</a> and submit:
-        </p>
-        <ul>
-        <li>The link to your code (GitHub, Replit, etc.)</li>
-        <li>A brief explanation of your solution</li>
-        </ul>
-        <p>
-        <strong>Join our Discord server:</strong> 
-        <a href="https://pytogo.org/discord">https://pytogo.org/discord</a><br>
-        Once inside:
-        </p>
-        <ul>
-        <li>Introduce yourself in the <code>#challenge-30days</code> channel</li>
-        <li>Let us know you're participating so we can assign you a special role</li>
-        <li>Stay active and engage with the community</li>
-        </ul>
-        <p>
-        Do you already have a Discord server? Let us know if you'd like to collaborate.
-        </p>
-        <p>
-        For help or support, reach out at <a href="mailto:support@pycon.tg">support@pycon.tg</a>.
-        </p>
-
-        """
-    body = render_email_template(
-        first_name="Omo Wass",
-        first_paragraph="We’re happy to inform you that your talk titled <span class='highlight'>Brett Cannon on Python, humans... and packaging</span> has been accepted for PyCon Togo 2025. Congratulations, and thank you for your support!",
-        message= msg
-    )
-    subject = "Test Email"
-    filename = "requirements.txt"  # Change this to your file path if needed
-    send_email_with_or_without_attachment(body, subject)
+    for participant in participants:
+        first_name = participant.get('full_name', 'Participant')
+        participant_email = participant.get('email')
+        try:
+            send_welcome_email(first_name=first_name, participant_email=participant_email)
+            print(f"Welcome email sent to {participant_email}")
+        except Exception as e:
+            print(f"Failed to send email to {participant_email}: {e}")

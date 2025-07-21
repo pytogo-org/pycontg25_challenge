@@ -91,6 +91,31 @@ def welcome_msg(first_name):
     ]
     return msgs
 
+
+def get_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link):
+    return [{
+        "subject": f"[Jour {day_number}] {fr_title}",
+        "body": f"""\
+        <h2>Bonjour {first_name},</h2>
+        <p>Voici ta tâche du jour <strong>Jour {day_number}</strong> :</p>
+        <p><strong>{fr_title}</strong></p>
+        <p>👉 <a href="{fr_link}">Accède à la tâche ici</a></p>
+        <br>
+        <p>Bonne chance et n'oublie pas de soumettre ta solution !</p>
+        """,
+    }, {
+        "subject": f"[Day {day_number}] {en_title}",
+        "body": f"""\
+        <h2>Hi {first_name},</h2>
+        <p>Here is your task for <strong>Day {day_number}</strong>:</p>
+        <p><strong>{en_title}</strong></p>
+        <p>👉 <a href="{en_link}">Access the challenge here</a></p>
+        <br>
+        <p>Good luck and don’t forget to submit your solution!</p>
+        """,
+    }]
+
+
 if __name__ == "__main__":
     participants = get_some_thing("participants")
     if not participants:
