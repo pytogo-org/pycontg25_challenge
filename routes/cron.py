@@ -136,8 +136,12 @@ async def send_daily_email_api(current_user: str = Depends(get_current_user)):
 
     if day_number < 1 or day_number > 30:
         raise HTTPException(status_code=400, detail="Invalid day number")
+    
+    if index >= len(tasks):
+        raise HTTPException(status_code=404, detail="Task not found for today")
+    
+    task = tasks[index]
 
-    task = tasks[day_number]
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
 
