@@ -116,6 +116,63 @@ def get_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_lin
     }]
 
 
+def get_bilingual_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link):
+    subject = f"[Day {day_number}] - {en_title} | [Jour {day_number}] - {fr_title}"
+
+    body = f"""
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 650px; margin: auto; color: #333;">
+        <h2>👋 Hello {first_name}!</h2>
+        <p>
+            This is your daily challenge email from <strong>Python Togo</strong> .<br>
+            You’ll find <strong>the English version first</strong>, followed by <strong>the French version below</strong>.
+        </p>
+
+        <h3> 🇬🇧 English Challenge</h3>
+        <p>
+            <strong>Day {day_number} - {en_title}</strong><br>
+            <a href="{en_link}">Click here to access today’s challenge</a>
+        </p>
+
+        <h3>🇫🇷  Défi en Français</h3>
+        <p>
+            <strong>Jour {day_number} - {fr_title}</strong><br>
+            <a href="{fr_link}">Clique ici pour accéder à la tâche du jour</a>
+        </p>
+
+        <hr>
+
+        <p style="font-size: 0.95em; color: #555;">
+             Reminder / Rappel : Ce n’est pas la vitesse qui compte, mais la régularité.<br>
+            It's not about speed, it's about consistency. Keep going!
+        </p> 
+
+        <hr>
+        <br>
+
+        <h3>Join the #workshop voice channel / Rejoins le canal vocal <a href="https://discord.gg/Uyf6nk436D">#workshop</a> </h3>
+        <p>
+             <strong>🇬🇧 We’ve set up a dedicated voice channel <code>#workshop</code> on our Discord server!</strong><br>
+            Come share your solution, ask questions, or just listen. Every day, we’ll host live mini-workshops to review the current or previous day’s task.<br>
+            No pressure Just good vibes, good Python, and community support 😊
+        </p>
+
+        <p>
+            <strong>🇫🇷 Un canal vocal <code>#workshop</code> est disponible sur notre serveur Discord !</strong><br>
+            Viens partager ta solution, poser tes questions ou simplement écouter. Chaque jour, on organise de petits ateliers audio pour discuter de la tâche du jour (ou d’hier).<br>
+            Pas besoin d’être expert. On apprend tous ensemble 😊
+        </p>
+
+        <p style="font-size: 0.9em;">
+            — The <strong>Python Togo</strong> team<br>
+            Discord  : <a href="https://pytogo.org/discord">pytogo.org/discord</a>
+        </p>
+    </div>
+    """
+
+    return subject, body
+
+
+
 if __name__ == "__main__":
     participants = get_some_thing("participants")
     if not participants:

@@ -65,15 +65,20 @@ def send_daily_email(first_name, day_number, fr_title, en_title, fr_link, en_lin
     """
     Sends the daily challenge email to the participant.
     """
-    from welcome import get_daily_challenge_email
-    email_msgs = get_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
-    for email in email_msgs:
-        body = render_email_template(
-            first_name=first_name,
-            message=email['body']
-        )
-        subject = email['subject']
-        send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
+    from welcome import  get_bilingual_challenge_email # , get_daily_challenge_email
+    subject, body = get_bilingual_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
+    # email_msgs = get_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
+    # for email in email_msgs:
+    #     body = render_email_template(
+    #         first_name=first_name,
+    #         message=email['body']
+    #     )
+    #     subject = email['subject']
+    body = render_email_template(
+        first_name=first_name,
+        message=body
+    )
+    send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
 
 
 if __name__ == "__main__":
