@@ -168,6 +168,63 @@ async def send_daily_email_api(current_user: str = Depends(get_current_user)):
 
     return {"message": "Daily emails sent successfully."}
 
+ALLOWED_USERS = {
+    "dev@pytogo.org": {
+        "password": "monmotdepassefort",
+        "role": "Admin"
+    }
+}
+
+@router.get("/send-daily-email_cron")
+async def send_daily_email_cron(request: Request):
+    headers = request.headers
+
+    email = headers.get("X-EMAIL")
+    password = headers.get("X-PASSWORD")
+
+    if not email or not password:
+        raise HTTPException(status_code=401, detail="Missing credentials")
+
+    user = ALLOWED_USERS.get(email)
+    if not user or user["password"] != password:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    if user["role"] not in ["Admin", "Developer-support"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    # Calcul du jour
+    start_date = datetime(2024, 7, 23).date()
+    today = date.today()
+    day_number = (today - start_date).days + 1
+    index = day_number - 1
+
+    if day_number < 1 or day_number > 30:
+        raise HTTPException(status_code=400, detail="Invalid day number")
+
+    task = tasks[index]
+
+    for participant in participants:
+        first_name = participant["full_name"]
+        email = participant["email"]
+
+        if check_already_sent(email, day_number):
+            print(f"{email} déjà envoyé, on saute.")
+            continue
+
+        send_daily_email(
+            first_name=first_name,
+            day_number=day_number,
+            fr_title=task["title_fr"],
+            en_title=task["title_en"],
+            fr_link=task["link_fr"],
+            en_link=task["link_en"],
+            participant_email=email
+        )
+
+        log_email_sent(email, day_number)
+
+    return {"message": f"Emails du jour {day_number} envoyés avec succès."}
+
 
 today = date.today()
 day_number = (today - datetime(2025, 6, 23).date()).days + 1
