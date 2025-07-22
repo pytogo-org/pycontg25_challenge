@@ -177,23 +177,12 @@ ALLOWED_USERS = {
 
 @router.get("/send-daily-email_cron")
 async def send_daily_email_cron(request: Request):
-    headers = request.headers
-
-    email = headers.get("X-EMAIL")
-    password = headers.get("X-PASSWORD")
-
-    if not email or not password:
-        raise HTTPException(status_code=401, detail="Missing credentials")
-
-    user = ALLOWED_USERS.get(email)
-    if not user or user["password"] != password:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    if user["role"] not in ["Admin", "Developer-support"]:
-        raise HTTPException(status_code=403, detail="Forbidden")
+    print(request.headers)
+    print("Cron endpoint called to send daily emails")
+    auth_header = request.headers.get("Authorization")
 
     # Calcul du jour
-    start_date = datetime(2024, 7, 23).date()
+    start_date = datetime(2025, 7, 21).date()
     today = date.today()
     day_number = (today - start_date).days + 1
     index = day_number - 1
