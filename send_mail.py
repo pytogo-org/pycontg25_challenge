@@ -81,6 +81,19 @@ def send_daily_email(first_name, day_number, fr_title, en_title, fr_link, en_lin
     send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
 
 
+def send_pre_challenge_info_email(first_name, participant_email=None):
+    """
+    Sends the pre-challenge information email to the participant.
+    """
+    from welcome import get_pre_challenge_info_email
+    subject, body = get_pre_challenge_info_email(first_name)
+    body = render_email_template(
+        first_name=first_name,
+        message=body
+    )
+    send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
+
+
 if __name__ == "__main__":
     participants = [
  {
