@@ -22,7 +22,7 @@ from routes.cron import router as cron_router
 
 load_dotenv()
 
-challenge_start_date = datetime(2025, 7, 20, 0, 0, 0)
+challenge_start_date = datetime(2025, 7, 23, 0, 0, 0)
 app = FastAPI(title="30-Day Python Challenge API", version="1.0.0")
 app.include_router(cron_router, prefix="/api/cron", tags=["Cron Jobs"])
 API_ROOT = os.environ.get("API_ROOT")
@@ -186,14 +186,14 @@ async def get_progress(progress: ProgressInfo):
                 "has_started": True if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else False
             })
 
-            stat_count = {
-                "total_tasks": len(tasks),
-                "tasks": [task for task in task_progress if task["has_started"]],
-                "total_submissions": len(submissions),
-                "completed_tasks": sum(1 for task in task_progress if task["status"] == "submitted"),
-                "in_progress_tasks": sum(1 for task in task_progress if task["status"] == "in progress"),
-                "pending_tasks": sum(1 for task in task_progress if task["status"] == "not submitted"),
-                "late_submissions": sum(1 for task in task_progress if task["status"] == "not submitted" and task.get("deadline") < now.isoformat())
+    stat_count = {
+            "total_tasks": len(tasks),
+            "tasks": [task for task in task_progress if task["has_started"]],
+            "total_submissions": len(submissions),
+            "completed_tasks": sum(1 for task in task_progress if task["status"] == "submitted"),
+            "in_progress_tasks": sum(1 for task in task_progress if task["status"] == "in progress"),
+            "pending_tasks": sum(1 for task in task_progress if task["status"] == "not submitted"),
+            "late_submissions": sum(1 for task in task_progress if task["status"] == "not submitted" and task.get("deadline") < now.isoformat())
             }
 
 
@@ -201,5 +201,4 @@ async def get_progress(progress: ProgressInfo):
 
 if __name__ == "__main__":
     # Populate tasks in the database
-    # populate_tasks()
-    pass
+    populate_tasks()

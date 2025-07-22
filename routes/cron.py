@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import date, datetime, timezone
 
 import jwt
-from send_mail import send_daily_email
+from send_mail import send_daily_email, send_pre_challenge_info_email
 from db import  get_some_thing, check_already_sent, log_email_sent
 
 router = APIRouter()
@@ -99,7 +99,7 @@ participants = [
  }
 ]
 
-
+participants = get_some_thing("participants")
 tasks =  get_some_thing("tasks")
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -214,6 +214,24 @@ async def send_daily_email_cron(request: Request):
 
     return {"message": f"Emails du jour {day_number} envoyés avec succès."}
 
+@router.get("/send-pre-challenge-info-email")
+async def send_pre_challenge_info_email_api():
+    """
+    Endpoint to send the pre-challenge information email to participants.
+    """
+    
+    for participant in participants:
+        first_name = participant["full_name"]
+        participant_email = participant["email"]
+        # Check if email has already been sent
+        if check_already_sent(participant_email, 0):
+            print(f"Pre-challenge info email already sent to {participant_email}. Skipping.")
+            continue
+        else:
+            send_pre_challenge_info_email(first_name, participant_email=participant_email)
+            log_email_sent(participant_email, 0)
+
+    return {"message": "Pre-challenge information emails sent successfully."}
 
 today = date.today()
 day_number = (today - datetime(2025, 6, 23).date()).days + 1

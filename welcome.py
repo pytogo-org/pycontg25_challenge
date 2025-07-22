@@ -172,6 +172,84 @@ def get_bilingual_challenge_email(first_name, day_number, fr_title, en_title, fr
     return subject, body
 
 
+def get_pre_challenge_info_email(first_name):
+    subject = "Challenge starts at midnight | PyCon Togo registration opens tomorrow"
+
+    body = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 650px; margin: auto; line-height: 1.6; color: #333;">
+        <h2>Bonjour {first_name}, Hello!</h2>
+
+        <p>
+            🇫🇷 Le <strong>Challenge 30 Jours Python</strong> organisé par <strong>Python Togo</strong> commence ce soir à <strong>00h00</strong> (minuit).<br>
+            🇬🇧 The <strong>30 Days of Python Challenge</strong> starts tonight at <strong>00:00 UTC</strong>.
+        </p>
+
+        <p>
+            🇫🇷 Tu recevras un email chaque jour avec une tâche à compléter, des ressources utiles, et un lien pour soumettre ta solution.<br>
+            🇬🇧 You will receive one email per day with your task, helpful resources, and a link to submit your solution.
+        </p>
+
+        <p>
+            🇫🇷 C’est totalement gratuit, et c’est pour nous tous, pour apprendre ensemble et faire grandir la communauté Python.<br>
+            🇬🇧 This is 100% free and made for all of us, to learn together and grow the Python community.
+        </p>
+
+        <hr>
+
+        <h3>🗓️ PyCon Togo 2025 — Inscriptions</h3>
+        <p>
+            🇫🇷 Les inscriptions pour <strong>PyCon Togo 2025</strong> ouvrent demain à <strong>16h30min GMT</strong>. Les places sont limitées, alors pense à réserver rapidement.<br>
+            Visite : <a href="https://pycontg.pytogo.org">https://pycontg.pytogo.org</a><br><br>
+            🇬🇧 <strong>PyCon Togo 2025 registration</strong> opens tomorrow at <strong>4:30 PM UTC</strong>. Places are limited — save your spot quickly!<br>
+            Visit: <a href="https://pycontg.pytogo.org">https://pycontg.pytogo.org</a>
+        </p>
+
+        <hr>
+
+        <h3>🎙️ Canal vocal #workshop sur Discord</h3>
+        <p>
+            🇫🇷 Chaque jour, des échanges et mini-ateliers auront lieu dans le canal vocal <code>#workshop</code> sur Discord. Tu peux y poser des questions, écouter ou partager ta solution.<br>
+            🇬🇧 Join our <code>#workshop</code> voice channel daily on Discord to share, ask, or just listen in.
+        </p>
+
+        <p>
+            👉 <a href="https://pytogo.org/discord">Rejoins notre serveur Discord ici</a>
+        </p>
+
+        <hr>
+
+        <h3>💬 Besoin d’aide ? / Need help?</h3>
+        <p>
+            🇫🇷 Si tu as la moindre question, n’hésite pas à :
+            <ul>
+                <li>💬 poser dans le serveur Discord (channel <code>#challenge-30jours</code>)</li>
+                <li>📧 envoyer un email à <a href="mailto:challenge@pytogo.org">challenge@pytogo.org</a></li>
+                <li>📞 appeler ou écrire sur WhatsApp : +228 98 27 38 05 ou +228 98 77 66 82</li>
+            </ul>
+            🇬🇧 If you have any question, feel free to:
+            <ul>
+                <li>💬 ask in the Discord server (<code>#challenge-30jours</code> channel)</li>
+                <li>📧 email us at <a href="mailto:challenge@pytogo.org">challenge@pytogo.org</a></li>
+                <li>📞 call or WhatsApp: +228 98 27 38 05 or +228 98 77 66 82</li>
+            </ul>
+        </p>
+
+        <hr>
+
+        <p style="font-size: 0.95em;">
+            🇫🇷 Merci d’être avec nous dans cette aventure. On apprend ensemble, on grandit ensemble.<br>
+            🇬🇧 Thank you for being part of this journey. We learn together, we grow together.
+        </p>
+
+        <p style="font-size: 0.9em;">
+            -- Wachiou BOURAIMA (Wasiu Ibrahim)
+        </p>
+    </div>
+    """
+
+    return subject, body
+
+
 
 if __name__ == "__main__":
     participants = get_some_thing("participants")

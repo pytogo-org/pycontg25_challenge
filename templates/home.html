@@ -807,8 +807,8 @@
         function updateCountdown() {
             //  disable the submit button if the challenge has started
             const submitButton = document.getElementById('submit_btn');
-            const challengeStart = new Date('2025-07-23T00:00:00');
-           
+            const challengeStart = new Date('2025-07-23T00:00:00Z');
+
             const now = new Date();
             const diff = challengeStart - now;
 
