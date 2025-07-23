@@ -538,11 +538,17 @@
         }
 
         // Registration form handler
-        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+        document.getElementById('registration-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            
+            // Basic validation
+            if (!data.full_name || !data.email || !data.experience_level) {
+                showAlert('alert-container', 'Please fill in all required fields', 'error');
+                return;
+            }
             
             try {
                 const response = await fetch('/api/register', {
@@ -554,25 +560,30 @@
                 });
                 
                 if (response.ok) {
-                    showAlert('alert-container', 'Registration successful! Welcome to the challenge!', 'success');
+                    showAlert('alert-container', translations[currentLanguage].registration_success, 'success');
                     e.target.reset();
                 } else {
                     const error = await response.json();
-                    showAlert('alert-container', error.detail || 'Registration failed. Please try again.', 'error');
+                    showAlert('alert-container', error.detail || translations[currentLanguage].registration_failed, 'error');
                 }
             } catch (error) {
-                showAlert('alert-container', 'Network error. Please check your connection and try again.', 'error');
+                console.error('Network error:', error);
+                showAlert('alert-container', translations[currentLanguage].network_error, 'error');
             }
         });
- 
 
         // Submission form handler
-        document.getElementById('submission-form').addEventListener('submit', async (e) => {
+        document.getElementById('submission-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
             
+            // Basic validation
+            if (!data.participant_email || !data.task_day || !data.solution) {
+                showAlert('submission-alert-container', 'Please fill in all required fields', 'error');
+                return;
+            }
             
             try {
                 const response = await fetch('/api/submit', {
@@ -584,14 +595,15 @@
                 });
                 
                 if (response.ok) {
-                    showAlert('submission-alert-container', 'Solution submitted successfully!', 'success');
+                    showAlert('submission-alert-container', translations[currentLanguage].submission_success, 'success');
                     e.target.reset();
                 } else {
                     const error = await response.json();
-                    showAlert('submission-alert-container', error.detail || 'Submission failed. Please try again.', 'error');
+                    showAlert('submission-alert-container', error.detail || translations[currentLanguage].submission_failed, 'error');
                 }
             } catch (error) {
-                showAlert('submission-alert-container', 'Network error. Please check your connection and try again.', 'error');
+                console.error('Network error:', error);
+                showAlert('submission-alert-container', translations[currentLanguage].network_error, 'error');
             }
         });
 
@@ -719,7 +731,7 @@
                 deadline: "Date Limite:",
                 submitted: "Soumis:",
                 released: "Publié:",
-                in_progress: "En Cours:"
+                in_progress: "En Cours"
             }
         };
 
@@ -779,11 +791,11 @@
         }
 
    
+        // Load progress function
         async function loadProgress() {
             const email = document.getElementById('dashboard-email').value;
-            console.log(email);
             if (!email) {
-                alert(translations[currentLanguage].enter_email_alert);
+                showAlert('alert-container', translations[currentLanguage].enter_email_alert, 'error');
                 return;
             }
 
@@ -795,17 +807,65 @@
                     },
                     body: JSON.stringify({"participant_email": email})
                 });
+                
                 if (response.ok) {
                     const data = await response.json();
-                    
                     displayProgress(data);
                 } else {
-                    alert(translations[currentLanguage].progress_load_failed);
+                    const errorData = await response.json();
+                    showAlert('alert-container', errorData.detail || translations[currentLanguage].progress_load_failed, 'error');
                 }
             } catch (error) {
                 console.error('Network error:', error);
-                alert(error);
+                showAlert('alert-container', translations[currentLanguage].network_error, 'error');
             }
+        }
+
+        // Language switching function
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+            
+            // Update select options
+            const experienceOptions = document.querySelectorAll('#experience option');
+            experienceOptions.forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            const dayOptions = document.querySelectorAll('#task-day option');
+            dayOptions.forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update placeholders
+            const solutionEl = document.getElementById('solution');
+            const explanationEl = document.getElementById('explanation');
+            const dashboardEmailEl = document.getElementById('dashboard-email');
+            
+            if (solutionEl) solutionEl.placeholder = translations[lang].solution_placeholder;
+            if (explanationEl) explanationEl.placeholder = translations[lang].explanation_placeholder;
+            if (dashboardEmailEl) dashboardEmailEl.placeholder = translations[lang].email_placeholder;
         }
 
         // Display progress function
@@ -814,21 +874,47 @@
             const progressStats = document.getElementById('progress-stats');
             const taskList = document.getElementById('task-list');
 
+            if (!data || !data.stats) {
+                console.error('Invalid data structure');
+                return;
+            }
             
-            stats = data.stats;
+            const stats = data.stats;
             progressStats.innerHTML = `
-                <h3>📈 ${translations[currentLanguage].progress_title.replace('📊 ', '')}</h3>
-                <p><strong>${translations[currentLanguage].total_tasks}</strong> ${stats.total_tasks}</p>
-                <p><strong>${translations[currentLanguage].released}</strong> ${stats.completed_tasks}</p>
-                <p><strong>${translations[currentLanguage].in_progress}</strong> ${stats.in_progress_tasks}</p>
-                <p><strong>${translations[currentLanguage].total_submissions}</strong> ${stats.total_submissions}</p>
-                <p><strong>${translations[currentLanguage].not_started}</strong> ${stats.not_started}</p>
-                <p><strong>${translations[currentLanguage].late_submissions}</strong> ${stats.late_submissions}</p>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3>📈 ${translations[currentLanguage].progress_title.replace('📊 ', '')}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div><strong>${translations[currentLanguage].total_tasks}</strong> ${stats.total_tasks}</div>
+                        <div><strong>${translations[currentLanguage].completed}:</strong> ${stats.completed_tasks}</div>
+                        <div><strong>${translations[currentLanguage].in_progress}:</strong> ${stats.in_progress_tasks}</div>
+                        <div><strong>${translations[currentLanguage].total_submissions}:</strong> ${stats.total_submissions}</div>
+                        <div><strong>${translations[currentLanguage].not_started}:</strong> ${stats.not_started}</div>
+                        <div><strong>${translations[currentLanguage].late_submissions}:</strong> ${stats.late_submissions}</div>
+                    </div>
+                </div>
             `;
 
-
+            // Display task list
+            if (data.progress && data.progress.length > 0) {
+                let taskListHTML = `<h3>${translations[currentLanguage].task_status}</h3>`;
+                data.progress.forEach(task => {
+                    const statusClass = task.status === 'submitted' ? 'status-submitted' : 
+                                       task.status === 'in progress' ? 'status-pending' : 'status-late';
+                    
+                    taskListHTML += `
+                        <div class="task-card">
+                            <h4>Day ${task.day}: ${task.title_en}</h4>
+                            <p><strong>${translations[currentLanguage].deadline}:</strong> ${new Date(task.deadline).toLocaleString()}</p>
+                            <span class="task-status ${statusClass}">${task.status}</span>
+                            ${task.solution ? `<p><strong>Solution:</strong> ${task.solution.substring(0, 100)}...</p>` : ''}
+                        </div>
+                    `;
+                });
+                taskList.innerHTML = taskListHTML;
             }
-             progressDisplay.style.display = 'block';
+
+            progressDisplay.style.display = 'block';
+        }
 
 
     </script>
