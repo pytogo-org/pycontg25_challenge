@@ -57,49 +57,11 @@ participants = [
    "registered_at": "2025-07-18 07:11:46.511461+00",
    "experience_level": "intermediate"
  },
- {
-   "id": 10,
-   "full_name": "Jonas O'Keefe",
-   "email": "pydevstogo@gmail.com",
-   "github_username": "virtual",
-   "registered_at": "2025-07-18 08:11:54.399932+00",
-   "experience_level": "intermediate"
- },
- {
-   "id": 15,
-   "full_name": "Jasen Huel",
-   "email": "contact@pytogo.org",
-   "github_username": "lime",
-   "registered_at": "2025-07-18 08:20:54.713168+00",
-   "experience_level": "advanced"
- },
- {
-   "id": 20,
-   "full_name": "Geoffrey Logovi",
-   "email": "geoffreylogovi2@gmail.com",
-   "github_username": "geoffreylgv",
-   "registered_at": "2025-07-18 08:33:56.030493+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 21,
-   "full_name": "KUMA Kossi Stéphane ",
-   "email": "wassioubouraim56@gmail.com",
-   "github_username": "stephanekuma",
-   "registered_at": "2025-07-18 09:40:02.109802+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 22,
-   "full_name": "AZIAGBENYO KOMLAN ELOM Laurent ",
-   "email": "wachiou@uplift.ng",
-   "github_username": "@Elom10Laurent",
-   "registered_at": "2025-07-18 11:34:15.576937+00",
-   "experience_level": "beginner"
- }
+
+ 
 ]
 
-participants = get_some_thing("participants")
+
 tasks =  get_some_thing("tasks")
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -182,7 +144,7 @@ async def send_daily_email_cron(request: Request):
     auth_header = request.headers.get("Authorization")
 
     # Calcul du jour
-    start_date = datetime(2025, 7, 21).date()
+    start_date = datetime(2025, 7, 23).date()
     today = date.today()
     day_number = (today - start_date).days + 1
     index = day_number - 1
