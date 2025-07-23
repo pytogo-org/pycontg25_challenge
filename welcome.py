@@ -251,6 +251,71 @@ def get_pre_challenge_info_email(first_name):
 
 
 
+def get_submission_instruction_email(first_name, fr_title, en_title, fr_link, en_link):
+    subject = "Soumets ta solution pour le jour 1 | Submit your Day 1 solution"
+
+    body = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 650px; margin: auto; line-height: 1.6; color: #333;">
+        <h2>🇫🇷 Bonjour {first_name},<br>🇬🇧 Hello {first_name},</h2>
+
+        <p>
+            🇫🇷 Le <strong>Challenge 30 Jours Python</strong> a officiellement commencé hier à minuit. Nous espérons que tout se passe bien pour toi !<br>
+            🇬🇧 The <strong>30 Days of Python Challenge</strong> officially started last night at midnight. We hope it’s going well for you!
+        </p>
+
+        <h3>📌 Tâche du jour 1 — Day 1 Task</h3>
+        <p>
+            🇫🇷 <strong>{fr_title}</strong><br>
+            <a href="{fr_link}">{fr_link}</a><br><br>
+            🇬🇧 <strong>{en_title}</strong><br>
+            <a href="{en_link}">{en_link}</a>
+        </p>
+
+        <hr>
+
+        <h3>📝 Soumettre ta solution — Submit your solution</h3>
+        <p>
+            🇫🇷 Tu peux soumettre ta solution ici : <a href="https://challenge.pytogo.org/submit">https://challenge.pytogo.org/submit</a><br>
+            🇬🇧 You can submit your solution here: <a href="https://challenge.pytogo.org/submit">https://challenge.pytogo.org/submit</a>
+        </p>
+
+        <p>
+            🇫🇷 À l’arrivée sur la page, il te suffit de :
+            <ul>
+                <li>Entrer l'adresse e-mail utilisée lors de l'inscription</li>
+                <li>Indiquer le lien vers ta solution (Drive, GitHub, Replit, etc.) ou écrire ton code directement</li>
+                <li>(Optionnel) Ajouter une brève explication</li>
+            </ul>
+            🇬🇧 On the page, simply:
+            <ul>
+                <li>Enter your registration email</li>
+                <li>Provide a link to your code (Drive, GitHub, Replit, etc.) or write it directly</li>
+                <li>(Optional) Add a brief explanation</li>
+            </ul>
+        </p>
+
+        <p><strong>📸 Capture du formulaire — Form Screenshot</strong></p>
+        <p>
+            <img src="https://challenge.pytogo.org/static/images/submit_form_fr.png" alt="Aperçu formulaire de soumission" style="width: 100%; max-width: 600px; border: 1px solid #ccc; border-radius: 8px;">
+        </p>
+
+        <hr>
+
+        <p>
+            🇫🇷 Il n'y a pas de bonne ou de mauvaise façon de faire, l’essentiel est de participer régulièrement !<br>
+            🇬🇧 There is no "perfect" way to submit — the most important thing is to stay consistent!
+        </p>
+
+        <p style="font-size: 0.9em;">
+            -- L'équipe Python Togo / Python Togo Team
+        </p>
+    </div>
+    """
+
+    return subject, body
+
+
+
 if __name__ == "__main__":
     participants = get_some_thing("participants")
     if not participants:
