@@ -1,293 +1,3 @@
-<script>
-        // Language translations
-        const translations = {
-            en: {
-                challenge_title: "30 Days of Python Challenge",
-                challenge_subtitle: "Join us for an intensive Python learning journey leading to PyCon Togo 2025",
-                countdown_title: "Challenge Starts In:",
-                days: "Days",
-                hours: "Hours",
-                minutes: "Minutes",
-                seconds: "Seconds",
-                challenge_info_title: "🎯 Challenge Details",
-                duration: "Duration:",
-                duration_text: "July 23, 2025 - August 21, 2025 (30 days)",
-                prize_ceremony: "Prize Ceremony:",
-                prize_ceremony_text: "PyCon Togo 2025 - August 23, 2025",
-                daily_tasks: "Daily Tasks:",
-                daily_tasks_text: "From beginner to advanced Python concepts",
-                strict_deadlines: "Strict Deadlines:",
-                strict_deadlines_text: "Each task must be submitted by 11:59 PM GMT",
-                progress_tracking: "Progress Tracking:",
-                progress_tracking_text: "Monitor your journey through our dashboard",
-                register_title: "📝 Register for Challenge",
-                full_name: "Full Name *",
-                email: "Email Address *",
-                github: "GitHub Username (Optional)",
-                experience: "Python Experience Level *",
-                select_level: "Select your level",
-                beginner: "Beginner",
-                intermediate: "Intermediate",
-                advanced: "Advanced",
-                join_challenge: "Join the Challenge",
-                submit_title: "📤 Submit Daily Task",
-                your_email: "Your Email *",
-                task_day: "Task Day *",
-                select_day: "Select day",
-                solution: "Your Solution / Link / URL / code*",
-                solution_placeholder: "Paste your Python code or link here...",
-                explanation: "Explanation (Optional)",
-                explanation_placeholder: "Explain your approach...",
-                submit_solution: "Submit Solution",
-                progress_title: "📊 Your Progress",
-                enter_email: "Enter your email to view progress:",
-                email_placeholder: "your@email.com",
-                load_progress: "Load Progress",
-                challenge_live: "Challenge is Live! 🚀",
-                registration_success: "Registration successful! Welcome to the challenge!",
-                registration_failed: "Registration failed. Please try again.",
-                submission_success: "Solution submitted successfully!",
-                submission_failed: "Submission failed. Please try again.",
-                network_error: "Network error. Please check your connection and try again.",
-                enter_email_alert: "Please enter your email address",
-                progress_load_failed: "Failed to load progress. Please check your email and try again.",
-                total_tasks: "Total Tasks:",
-                completed: "Completed:",
-                pending: "Pending:",
-                late_submissions: "Late Submissions:",
-                task_status: "📋 Task Status",
-                deadline: "Deadline:",
-                submitted: "Submitted:"
-            },
-            fr: {
-                challenge_title: "Défi Python de 30 Jours",
-                challenge_subtitle: "Rejoignez-nous pour un parcours d'apprentissage intensif de Python menant à PyCon Togo 2025",
-                countdown_title: "Le Défi Commence Dans:",
-                days: "Jours",
-                hours: "Heures",
-                minutes: "Minutes",
-                seconds: "Secondes",
-                challenge_info_title: "🎯 Détails du Défi",
-                duration: "Durée:",
-                duration_text: "23 juillet 2025 - 21 août 2025 (30 jours)",
-                prize_ceremony: "Cérémonie de Remise des Prix:",
-                prize_ceremony_text: "PyCon Togo 2025 - 23 août 2025",
-                daily_tasks: "Tâches Quotidiennes:",
-                daily_tasks_text: "Des concepts Python débutant à avancé",
-                strict_deadlines: "Délais Stricts:",
-                strict_deadlines_text: "Chaque tâche doit être soumise avant 23h59 GMT",
-                progress_tracking: "Suivi des Progrès:",
-                progress_tracking_text: "Surveillez votre parcours via notre tableau de bord",
-                register_title: "📝 S'inscrire au Défi",
-                full_name: "Nom Complet *",
-                email: "Adresse Email *",
-                github: "Nom d'utilisateur GitHub (Optionnel)",
-                experience: "Niveau d'Expérience Python *",
-                select_level: "Sélectionnez votre niveau",
-                beginner: "Débutant",
-                intermediate: "Intermédiaire",
-                advanced: "Avancé",
-                join_challenge: "Rejoindre le Défi",
-                submit_title: "📤 Soumettre la Tâche Quotidienne",
-                your_email: "Votre Email *",
-                task_day: "Jour de la Tâche *",
-                select_day: "Sélectionnez le jour",
-                solution: "Votre Solution / Lien / URL / code *",
-                solution_placeholder: "Collez votre code Python ou lien ici...",
-                explanation: "Explication (Optionnel)",
-                explanation_placeholder: "Expliquez votre approche...",
-                submit_solution: "Soumettre la Solution",
-                progress_title: "📊 Vos Progrès",
-                enter_email: "Entrez votre email pour voir les progrès:",
-                email_placeholder: "votre@email.com",
-                load_progress: "Charger les Progrès",
-                challenge_live: "Le Défi est En Direct! 🚀",
-                registration_success: "Inscription réussie! Bienvenue au défi!",
-                registration_failed: "Échec de l'inscription. Veuillez réessayer.",
-                submission_success: "Solution soumise avec succès!",
-                submission_failed: "Échec de la soumission. Veuillez réessayer.",
-                network_error: "Erreur réseau. Vérifiez votre connexion et réessayez.",
-                enter_email_alert: "Veuillez entrer votre adresse email",
-                progress_load_failed: "Échec du chargement des progrès. Vérifiez votre email et réessayez.",
-                total_tasks: "Tâches Totales:",
-                completed: "Terminées:",
-                pending: "En Attente:",
-                late_submissions: "Soumissions en Retard:",
-                task_status: "📋 Statut des Tâches",
-                deadline: "Date Limite:",
-                submitted: "Soumis:"
-            }
-        };
-
-        let currentLanguage = 'en';
-
-        // Language switching function
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-            
-            // Update button states
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`lang-${lang}`).classList.add('active');
-            
-            // Update all translatable elements
-            document.querySelectorAll('[data-translate]').forEach(element => {
-                const key = element.getAttribute('data-translate');
-                if (translations[lang][key]) {
-                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                        element.placeholder = translations[lang][key];
-                    } else {
-                        element.textContent = translations[lang][key];
-                    }
-                }
-            });
-            
-            // Update select options
-            const experienceOptions = document.querySelectorAll('#experience option');
-            experienceOptions.forEach(option => {
-                const key = option.getAttribute('data-translate');
-                if (key && translations[lang][key]) {
-                    option.textContent = translations[lang][key];
-                }
-            });
-            
-            const dayOptions = document.querySelectorAll('#task-day option');
-            dayOptions.forEach(option => {
-                const key = option.getAttribute('data-translate');
-                if (key && translations[lang][key]) {
-                    option.textContent = translations[lang][key];
-                }
-            });
-            
-            // Update placeholders
-            document.getElementById('solution').placeholder = translations[lang].solution_placeholder;
-            document.getElementById('explanation').placeholder = translations[lang].explanation_placeholder;
-            document.getElementById('dashboard-email').placeholder = translations[lang].email_placeholder;
-        }
-
-        // Countdown Timer
-        function updateCountdown() {
-            const challengeStart = new Date('2025-07-23T00:00:00');
-            const now = new Date();
-            const diff = challengeStart - now;
-
-            if (diff > 0) {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                document.getElementById('days').textContent = days.toString().padStart(2, '0');
-                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-            } else {
-                document.getElementById('countdown').innerHTML = `<h2>${translations[currentLanguage].challenge_live}</h2>`;
-            }
-        }
-
-        // Initialize countdown
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-
-        // Populate task days
-        function populateTaskDays() {
-            const taskDaySelect = document.getElementById('task-day');
-            const startDate = new Date('2025-07-23T00:00:00');
-            
-            for (let i = 1; i <= 30; i++) {
-                const currentDate = new Date(startDate);
-                currentDate.setDate(startDate.getDate() + i - 1);
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = `Day ${i} (${currentDate.toLocaleDateString()})`;
-                taskDaySelect.appendChild(option);
-            }
-        }
-
-        populateTaskDays();
-
-        // Alert functions
-        function showAlert(containerId, message, type) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => {
-                container.innerHTML = '';
-            }, 5000);
-        }
-
-        // Registration form handler
-       
-
-        // Submission form handler
- 
-
-        // Progress loading function
-        async function loadProgress() {
-            const email = document.getElementById('dashboard-email').value;
-            console.log(email);
-            if (!email) {
-                alert(translations[currentLanguage].enter_email_alert);
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/progress`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({"participant_email": email})
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    displayProgress(data);
-                } else {
-                    alert(translations[currentLanguage].progress_load_failed);
-                }
-            } catch (error) {
-                console.error('Network error:', error);
-                alert(error);
-            }
-        }
-
-        // Display progress function
-        function displayProgress(data) {
-            const progressDisplay = document.getElementById('progress-display');
-            const progressStats = document.getElementById('progress-stats');
-            const taskList = document.getElementById('task-list');
-
-            
-            stats = data.stats;
-            progressStats.innerHTML = `
-                <h3>📈 ${translations[currentLanguage].progress_title.replace('📊 ', '')}</h3>
-                <p><strong>${translations[currentLanguage].total_tasks}</strong> ${stats.total_tasks}</p>
-                <p><strong>${translations[currentLanguage].completed}</strong> ${stats.completed_tasks}</p>
-                <p><strong>${translations[currentLanguage].pending}</strong> ${stats.pending_tasks}</p>
-                <p><strong>${translations[currentLanguage].late_submissions}</strong> ${stats.late_submissions}</p>
-            `;
-           
-
-            //taskList.innerHTML = `<h3>${translations[currentLanguage].task_status}</h3>`;
-            //data.tasks.forEach(task => {
-            //    const taskCard = document.createElement('div');
-            //    taskCard.className = 'task-card';
-            //    taskCard.innerHTML = `
-            //        <h4>Day ${task.day}</h4>
-            //        <p><strong>${translations[currentLanguage].deadline}</strong> ${task.deadline}</p>
-            //        <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
-            //        ${task.submitted_at ? `<p><small>${translations[currentLanguage].submitted} ${task.submitted_at}</small></p>` : ''}
-            //    `;
-            //    taskList.appendChild(taskCard);
-            //});
-
-            }
-             progressDisplay.style.display = 'block';
-            </script>
-
-    
-        
-            
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -828,6 +538,32 @@
         }
 
         // Registration form handler
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('alert-container', 'Registration successful! Welcome to the challenge!', 'success');
+                    e.target.reset();
+                } else {
+                    const error = await response.json();
+                    showAlert('alert-container', error.detail || 'Registration failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                showAlert('alert-container', 'Network error. Please check your connection and try again.', 'error');
+            }
+        });
  
 
         // Submission form handler
@@ -858,6 +594,241 @@
                 showAlert('submission-alert-container', 'Network error. Please check your connection and try again.', 'error');
             }
         });
+
+
+        const translations = {
+            en: {
+                challenge_title: "30 Days of Python Challenge",
+                challenge_subtitle: "Join us for an intensive Python learning journey leading to PyCon Togo 2025",
+                countdown_title: "Challenge Starts In:",
+                days: "Days",
+                hours: "Hours",
+                minutes: "Minutes",
+                seconds: "Seconds",
+                challenge_info_title: "🎯 Challenge Details",
+                duration: "Duration:",
+                duration_text: "July 23, 2025 - August 21, 2025 (30 days)",
+                prize_ceremony: "Prize Ceremony:",
+                prize_ceremony_text: "PyCon Togo 2025 - August 23, 2025",
+                daily_tasks: "Daily Tasks:",
+                daily_tasks_text: "From beginner to advanced Python concepts",
+                strict_deadlines: "Strict Deadlines:",
+                strict_deadlines_text: "Each task must be submitted by 11:59 PM GMT",
+                progress_tracking: "Progress Tracking:",
+                progress_tracking_text: "Monitor your journey through our dashboard",
+                register_title: "📝 Register for Challenge",
+                full_name: "Full Name *",
+                email: "Email Address *",
+                github: "GitHub Username (Optional)",
+                experience: "Python Experience Level *",
+                select_level: "Select your level",
+                beginner: "Beginner",
+                intermediate: "Intermediate",
+                advanced: "Advanced",
+                join_challenge: "Join the Challenge",
+                submit_title: "📤 Submit Daily Task",
+                your_email: "Your Email *",
+                task_day: "Task Day *",
+                select_day: "Select day",
+                solution: "Your Solution / Link / URL / code*",
+                solution_placeholder: "Paste your Python code or link here...",
+                explanation: "Explanation (Optional)",
+                explanation_placeholder: "Explain your approach...",
+                submit_solution: "Submit Solution",
+                progress_title: "📊 Your Progress",
+                enter_email: "Enter your email to view progress:",
+                email_placeholder: "your@email.com",
+                load_progress: "Load Progress",
+                challenge_live: "Challenge is Live! 🚀",
+                registration_success: "Registration successful! Welcome to the challenge!",
+                registration_failed: "Registration failed. Please try again.",
+                submission_success: "Solution submitted successfully!",
+                submission_failed: "Submission failed. Please try again.",
+                network_error: "Network error. Please check your connection and try again.",
+                enter_email_alert: "Please enter your email address",
+                progress_load_failed: "Failed to load progress. Please check your email and try again.",
+                total_tasks: "Total Tasks:",
+                completed: "Completed:",
+                pending: "Pending:",
+                not_started: "Not Started:",
+                total_submissions: "Total Submissions:",
+                late_submissions: "Late Submissions:",
+                task_status: "📋 Task Status",
+                deadline: "Deadline:",
+                submitted: "Submitted:",
+                released: "Released:",
+                in_progress: "In Progress"
+            },
+            fr: {
+                challenge_title: "Défi Python de 30 Jours",
+                challenge_subtitle: "Rejoignez-nous pour un parcours d'apprentissage intensif de Python menant à PyCon Togo 2025",
+                countdown_title: "Le Défi Commence Dans:",
+                days: "Jours",
+                hours: "Heures",
+                minutes: "Minutes",
+                seconds: "Secondes",
+                challenge_info_title: "🎯 Détails du Défi",
+                duration: "Durée:",
+                duration_text: "23 juillet 2025 - 21 août 2025 (30 jours)",
+                prize_ceremony: "Cérémonie de Remise des Prix:",
+                prize_ceremony_text: "PyCon Togo 2025 - 23 août 2025",
+                daily_tasks: "Tâches Quotidiennes:",
+                daily_tasks_text: "Des concepts Python débutant à avancé",
+                strict_deadlines: "Délais Stricts:",
+                strict_deadlines_text: "Chaque tâche doit être soumise avant 23h59 GMT",
+                progress_tracking: "Suivi des Progrès:",
+                progress_tracking_text: "Surveillez votre parcours via notre tableau de bord",
+                register_title: "📝 S'inscrire au Défi",
+                full_name: "Nom Complet *",
+                email: "Adresse Email *",
+                github: "Nom d'utilisateur GitHub (Optionnel)",
+                experience: "Niveau d'Expérience Python *",
+                select_level: "Sélectionnez votre niveau",
+                beginner: "Débutant",
+                intermediate: "Intermédiaire",
+                advanced: "Avancé",
+                join_challenge: "Rejoindre le Défi",
+                submit_title: "📤 Soumettre la Tâche Quotidienne",
+                your_email: "Votre Email *",
+                task_day: "Jour de la Tâche *",
+                select_day: "Sélectionnez le jour",
+                solution: "Votre Solution / Lien / URL / code *",
+                solution_placeholder: "Collez votre code Python ou lien ici...",
+                explanation: "Explication (Optionnel)",
+                explanation_placeholder: "Expliquez votre approche...",
+                submit_solution: "Soumettre la Solution",
+                progress_title: "📊 Vos Progrès",
+                enter_email: "Entrez votre email pour voir les progrès:",
+                email_placeholder: "votre@email.com",
+                load_progress: "Charger les Progrès",
+                challenge_live: "Le Défi est En Direct! 🚀",
+                registration_success: "Inscription réussie! Bienvenue au défi!",
+                registration_failed: "Échec de l'inscription. Veuillez réessayer.",
+                submission_success: "Solution soumise avec succès!",
+                submission_failed: "Échec de la soumission. Veuillez réessayer.",
+                network_error: "Erreur réseau. Vérifiez votre connexion et réessayez.",
+                enter_email_alert: "Veuillez entrer votre adresse email",
+                progress_load_failed: "Échec du chargement des progrès. Vérifiez votre email et réessayez.",
+                total_tasks: "Tâches Totales:",
+                completed: "Terminées:",
+                pending: "En Attente:",
+                total_submissions: "Soumissions Totales:",
+                not_started: "Pas Commencées:",
+                late_submissions: "Soumissions en Retard:",
+                task_status: "📋 Statut des Tâches",
+                deadline: "Date Limite:",
+                submitted: "Soumis:",
+                released: "Publié:",
+                in_progress: "En Cours:"
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // Language switching function
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+            
+            // Update select options
+            const experienceOptions = document.querySelectorAll('#experience option');
+            experienceOptions.forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            const dayOptions = document.querySelectorAll('#task-day option');
+            dayOptions.forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update placeholders
+            document.getElementById('solution').placeholder = translations[lang].solution_placeholder;
+            document.getElementById('explanation').placeholder = translations[lang].explanation_placeholder;
+            document.getElementById('dashboard-email').placeholder = translations[lang].email_placeholder;
+        }
+
+        
+
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+   
+        async function loadProgress() {
+            const email = document.getElementById('dashboard-email').value;
+            console.log(email);
+            if (!email) {
+                alert(translations[currentLanguage].enter_email_alert);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({"participant_email": email})
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    displayProgress(data);
+                } else {
+                    alert(translations[currentLanguage].progress_load_failed);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert(error);
+            }
+        }
+
+        // Display progress function
+        function displayProgress(data) {
+            const progressDisplay = document.getElementById('progress-display');
+            const progressStats = document.getElementById('progress-stats');
+            const taskList = document.getElementById('task-list');
+
+            
+            stats = data.stats;
+            progressStats.innerHTML = `
+                <h3>📈 ${translations[currentLanguage].progress_title.replace('📊 ', '')}</h3>
+                <p><strong>${translations[currentLanguage].total_tasks}</strong> ${stats.total_tasks}</p>
+                <p><strong>${translations[currentLanguage].released}</strong> ${stats.completed_tasks}</p>
+                <p><strong>${translations[currentLanguage].in_progress}</strong> ${stats.in_progress_tasks}</p>
+                <p><strong>${translations[currentLanguage].total_submissions}</strong> ${stats.total_submissions}</p>
+                <p><strong>${translations[currentLanguage].not_started}</strong> ${stats.not_started}</p>
+                <p><strong>${translations[currentLanguage].late_submissions}</strong> ${stats.late_submissions}</p>
+            `;
+
+
+            }
+             progressDisplay.style.display = 'block';
 
 
     </script>
