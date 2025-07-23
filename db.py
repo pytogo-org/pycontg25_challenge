@@ -82,6 +82,21 @@ def get_some_where(table_name: str, column1: str, value1: str, column2: str, val
     response = supabase.table(table_name).select("*").eq(column1, value1).eq(column2, value2).execute()
     return response.data if response.data else []
 
+def get_one_where(table_name: str, column: str, value: str):
+    """
+    Fetches a single record from a specified table in the Supabase database where a column matches a value.
+
+    Args:
+        table_name (str): The name of the table to query.
+        column (str): The column to filter by.
+        value (str): The value to match in the column.
+
+    Returns:
+        dict: The first record that matches the criteria or None if not found.
+    """
+    response = supabase.table(table_name).select("*").eq(column, value).execute()
+    return response.data[0] if response.data else None
+
 def log_email_sent(participant_email: str, day_number: int):
     """
     Logs that an email has been sent to a participant for a specific day.

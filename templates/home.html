@@ -216,60 +216,10 @@
         }
 
         // Registration form handler
-        document.getElementById('registration-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            
-            try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (response.ok) {
-                    showAlert('alert-container', translations[currentLanguage].registration_success, 'success');
-                    e.target.reset();
-                } else {
-                    const error = await response.json();
-                    showAlert('alert-container', error.detail || translations[currentLanguage].registration_failed, 'error');
-                }
-            } catch (error) {
-                showAlert('alert-container', translations[currentLanguage].network_error, 'error');
-            }
-        });
+       
 
         // Submission form handler
-        document.getElementById('submission-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            
-            try {
-                const response = await fetch('/api/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (response.ok) {
-                    showAlert('submission-alert-container', translations[currentLanguage].submission_success, 'success');
-                    e.target.reset();
-                } else {
-                    const error = await response.json();
-                    showAlert('submission-alert-container', error.detail || translations[currentLanguage].submission_failed, 'error');
-                }
-            } catch (error) {
-                showAlert('submission-alert-container', translations[currentLanguage].network_error, 'error');
-            }
-        });
+ 
 
         // Progress loading function
         async function loadProgress() {
@@ -846,27 +796,27 @@
         setInterval(updateCountdown, 1000);
 
         // Populate task days
-        function populateTaskDays() {
-            const taskDaySelect = document.getElementById('task-day');
-            const startDate = new Date('2025-07-23T00:00:00Z'); // Challenge starts on July 23, 2025
+            function populateTaskDays() {
+                const taskDaySelect = document.getElementById('task-day');
+                const startDate = new Date('2025-07-23T00:00:00Z'); // Challenge starts on July 23, 2025
 
-            for (let i = 1; i <= 30; i++) {
-                const currentDate = new Date(startDate);
-                currentDate.setDate(startDate.getDate() + i - 1);
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = `Day ${i} (${currentDate.toLocaleDateString()})`;
-                const now = new Date();
-                const endOfChallengeDay = new Date(currentDate);
-                endOfChallengeDay.setHours(23, 59, 59, 999);
-                if (now > endOfChallengeDay) {
-                    option.disabled = true; // Disable options for days after the challenge ends
+                for (let i = 1; i <= 30; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i - 1);
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Day ${i} (${currentDate.toLocaleDateString()})`;
+                    const now = new Date();
+                    const endOfChallengeDay = new Date(currentDate);
+                    endOfChallengeDay.setHours(23, 59, 59, 999);
+                    if (now > endOfChallengeDay) {
+                        option.disabled = true; // Disable options for days after the challenge ends
+                    }
+                    taskDaySelect.appendChild(option);
                 }
-                taskDaySelect.appendChild(option);
             }
-        }
 
-        populateTaskDays();
+            populateTaskDays();
 
         // Alert functions
         function showAlert(containerId, message, type) {
@@ -878,33 +828,7 @@
         }
 
         // Registration form handler
-        document.getElementById('registration-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            
-            
-            try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (response.ok) {
-                    showAlert('alert-container', 'Registration successful! Welcome to the challenge!', 'success');
-                    e.target.reset();
-                } else {
-                    const error = await response.json();
-                    showAlert('alert-container', error.detail || 'Registration failed. Please try again.', 'error');
-                }
-            } catch (error) {
-                showAlert('alert-container', 'Network error. Please check your connection and try again.', 'error');
-            }
-        });
+ 
 
         // Submission form handler
         document.getElementById('submission-form').addEventListener('submit', async (e) => {

@@ -93,17 +93,21 @@ async def send_daily_email_api(current_user: str = Depends(get_current_user)):
             print(f"Email already sent to {participant_email} for day {day_number}. Skipping.")
             continue
         else:
-            send_daily_email(
-            first_name=first_name,
-            day_number=day_number,
-            fr_title=task["title_fr"],
-            en_title=task["title_en"],
-            fr_link=task["link_fr"],
-            en_link=task["link_en"],
-            participant_email=participant_email
-            )
-
-        log_email_sent(participant_email, day_number)
+            try:
+                send_daily_email(
+                    first_name=first_name,
+                    day_number=day_number,
+                    fr_title=task["title_fr"],
+                    en_title=task["title_en"],
+                    fr_link=task.get("link_fr"),
+                    en_link=task.get("link_en"),
+                    participant_email=participant_email
+                )
+                log_email_sent(participant_email, day_number)
+                print(f"Email sent to {participant_email} for day {day_number}.")
+            except Exception as e:
+                print(f"Failed to send email to {participant_email} for day {day_number}: {e}")
+                continue
 
     return {"message": "Daily emails sent successfully."}
 
@@ -138,18 +142,22 @@ async def send_daily_email_cron(request: Request):
         if check_already_sent(email, day_number):
             print(f"{email} déjà envoyé, on saute.")
             continue
-
-        send_daily_email(
-            first_name=first_name,
-            day_number=day_number,
-            fr_title=task["title_fr"],
-            en_title=task["title_en"],
-            fr_link=task["link_fr"],
-            en_link=task["link_en"],
-            participant_email=email
-        )
-
-        log_email_sent(email, day_number)
+        else:
+            try:
+                send_daily_email(
+                    first_name=first_name,
+                    day_number=day_number,
+                    fr_title=task["title_fr"],
+                    en_title=task["title_en"],
+                    fr_link=task.get("link_fr"),
+                    en_link=task.get("link_en"),
+                    participant_email=email
+                )
+                log_email_sent(email, day_number)
+                print(f"Email envoyé à {email} pour le jour {day_number}.")
+            except Exception as e:
+                print(f"Échec de l'envoi de l'email à {email} pour le jour {day_number}: {e}")
+                continue
 
     return {"message": f"Emails du jour {day_number} envoyés avec succès."}
 
@@ -167,7 +175,7 @@ async def send_pre_challenge_info_email_api():
             print(f"Pre-challenge info email already sent to {participant_email}. Skipping.")
             continue
         else:
-            send_pre_challenge_info_email(first_name, participant_email=participant_email)
+            # send_pre_challenge_info_email(first_name, participant_email=participant_email)
             log_email_sent(participant_email, 0)
 
     return {"message": "Pre-challenge information emails sent successfully."}
