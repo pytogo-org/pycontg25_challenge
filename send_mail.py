@@ -1,11 +1,15 @@
 from email import encoders
 from email.mime.base import MIMEBase
 from email.utils import formataddr
+import json
 import os
 from dotenv import load_dotenv
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
+from datetime import date
+from db import get_some_thing
 from email_template import render_email_template
 
 
@@ -93,104 +97,52 @@ def send_pre_challenge_info_email(first_name, participant_email=None):
     )
     send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
 
+def submission_instruction_email(first_name, fr_titre, en_titre, fr_link, en_link, participant_email=None):
+    """
+    Sends the submission instruction email to the participant.
+    """
+    from welcome import get_submission_instruction_email
+    subject, body = get_submission_instruction_email(first_name, fr_titre, en_titre, fr_link, en_link)
+    body = render_email_template(
+        first_name=first_name,
+        message=body
+    )
+    send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
 
 if __name__ == "__main__":
-    participants = [
- {
-   "id": 5,
-   "full_name": "Wachiou BOURAIMA",
-   "email": "wachioubouraima56@gmail.com",
-   "github_username": "wass",
-   "registered_at": "2025-07-18 00:57:36.553598+00",
-   "experience_level": "intermediate"
- },
- {
-   "id": 6,
-   "full_name": "Uk'iva DAPAM",
-   "email": "ukiva.dapam@gmail.com",
-   "github_username": "@dukst0n",
-   "registered_at": "2025-07-18 05:47:55.833491+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 7,
-   "full_name": "Moukitat LASSISI",
-   "email": "moukitatlassisi6@gmail.com",
-   "github_username": "Moukitat LASSISI",
-   "registered_at": "2025-07-18 06:45:03.603765+00",
-   "experience_level": "intermediate"
- },
- {
-   "id": 8,
-   "full_name": "DORVI Yao Théodore ",
-   "email": "tdorvi@gmail.com",
-   "github_username": "",
-   "registered_at": "2025-07-18 07:11:46.511461+00",
-   "experience_level": "intermediate"
- },
- {
-   "id": 10,
-   "full_name": "Jonas O'Keefe",
-   "email": "marguerite.welch@goldenmarine.net",
-   "github_username": "virtual",
-   "registered_at": "2025-07-18 08:11:54.399932+00",
-   "experience_level": "intermediate"
- },
- {
-   "id": 15,
-   "full_name": "Jasen Huel",
-   "email": "blake.hahn@goldenmarine.net",
-   "github_username": "lime",
-   "registered_at": "2025-07-18 08:20:54.713168+00",
-   "experience_level": "advanced"
- },
- {
-   "id": 20,
-   "full_name": "Geoffrey Logovi",
-   "email": "geoffreylogovi2@gmail.com",
-   "github_username": "geoffreylgv",
-   "registered_at": "2025-07-18 08:33:56.030493+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 21,
-   "full_name": "KUMA Kossi Stéphane ",
-   "email": "kumastephane@gmail.com",
-   "github_username": "stephanekuma",
-   "registered_at": "2025-07-18 09:40:02.109802+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 22,
-   "full_name": "AZIAGBENYO KOMLAN ELOM Laurent ",
-   "email": "laziagbenyo@gmail.com",
-   "github_username": "@Elom10Laurent",
-   "registered_at": "2025-07-18 11:34:15.576937+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 33,
-   "full_name": "AGBOSSOUMONDE LUther",
-   "email": "luthermondey53@gmail.com",
-   "github_username": "lutherkingcp0",
-   "registered_at": "2025-07-18 15:06:02.027752+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 53,
-   "full_name": "Samadou Ouro-agorouko ",
-   "email": "souroagorouko@gmail.com",
-   "github_username": "Bakugo90",
-   "registered_at": "2025-07-19 10:53:13.92151+00",
-   "experience_level": "intermediate"
- }
-]
+    
+    today = date.today()
+    day_number = (today - date(2025, 7, 23)).days + 1
+    index = day_number - 1
+    participants = get_some_thing("participants")
+    if not participants:
+        print("No participants found.")
+        exit(1)
+    with open("templates/tasks.json", "r") as file:
+        tasks = json.load(file)
 
-    for participant in participants:
-        first_name = participant.get('full_name', 'Participant')
-        participant_email = participant.get('email')
-        try:
-            send_welcome_email(first_name=first_name, participant_email=participant_email)
-            print(f"Welcome email sent to {participant_email}")
-        except Exception as e:
-            print(f"Failed to send email to {participant_email}: {e}")
+    if 0 <= index < len(tasks):
+        task = tasks[index]
+        first_name = "Pythonista"
+        fr_title = task["title_fr"]
+        en_title = task["title_en"]
+        fr_link = task.get("link_fr")
+        en_link = task.get("link_en")
+        for participant in participants:
+            participant_email = participant["email"]
+            first_name = participant["full_name"]
+            if not participant_email:
+                print(f"No email found for participant {participant['full_name']}. Skipping.")
+                continue
+            print(f"Sending daily email for day {day_number} to {first_name} at {participant_email}... ")
+            submission_instruction_email(
+                first_name=first_name,
+                fr_titre=fr_title,
+                en_titre=en_title,
+                fr_link=fr_link,
+                en_link=en_link,
+                participant_email=participant_email
+            )
+            print(f"Email sent to {first_name} at {participant_email}.")
+    else:
+        print(f"Invalid day number: {day_number}. No task found for this day.")

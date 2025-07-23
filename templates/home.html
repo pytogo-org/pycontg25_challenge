@@ -728,6 +728,8 @@
         </div>
 
         <div class="main-content">
+            
+            {% if display_registration_card %}
             <div class="card" id="registration-card" >
                 <h2 data-translate="register_title">📝 Register for Challenge</h2>
                 <div id="alert-container"></div>
@@ -757,7 +759,10 @@
                 </form>
             </div>
 
-            <div class="card" id="submission-card" >
+            {% endif %}
+
+           {% if display_submission_card %}
+            <div class="card" id="submission-card">
                 <h2 data-translate="submit_title">📤 Submit Daily Task</h2>
                 <div id="submission-alert-container"></div>
                 <form id="submission-form">
@@ -782,8 +787,10 @@
                     <button type="submit" class="btn" id="submit_btn" data-translate="submit_solution" >Submit Solution</button>
                 </form>
             </div>
+           {% endif %}
         </div>
 
+        {% if display_progress_card %}
         <div class="dashboard" id="dashboard">
             <div class="card">
                 <h2 data-translate="progress_title">📊 Your Progress</h2>
@@ -800,6 +807,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
     <script>

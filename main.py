@@ -2,6 +2,8 @@
 import os
 import typing
 
+
+
 if not hasattr(typing, "_ClassVar") and hasattr(typing, "ClassVar"):
     typing._ClassVar = typing.ClassVar
 
@@ -9,9 +11,10 @@ import json
 from time import timezone
 from send_mail import send_welcome_email
 from email_template import render_email_template
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.templating import Jinja2Templates
+from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from datetime import datetime, timedelta, timezone
@@ -39,6 +42,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+static_folder = os.path.join(os.path.dirname(__file__), "static")
+templates_folder = os.path.join(os.path.dirname(__file__), "templates")
+app.mount("/static", StaticFiles(directory=static_folder), name="static")
+templates = Jinja2Templates(directory=templates_folder)
 
 def populate_tasks():
     """Populate the tasks table with 30 days of challenges"""
@@ -83,9 +91,25 @@ def populate_tasks():
 
 
 @app.get("/")
-def read_root():
+def read_root(request: Request):
     """Root endpoint to serve the home page"""
-    return FileResponse("templates/home.html")
+    return templates.TemplateResponse("home.html", {"request": request, "display_submission_card": True, "display_progress_card": True, "display_registration_card": True})
+
+@app.get('/submit')
+def submit_page(request: Request):
+    """Serve the task submission page"""
+    return templates.TemplateResponse("home.html", {"request": request, "display_submission_card": True, "display_progress_card": True, "display_registration_card": False})
+
+@app.get('/progress')
+def progress_page(request: Request):
+    """Serve the progress page"""
+    return templates.TemplateResponse("home.html", {"request": request, "display_submission_card": True, "display_progress_card": True, "display_registration_card": False})
+
+@app.get('/register')
+def register_page(request: Request):
+    """Serve the registration page"""
+    return templates.TemplateResponse("home.html", {"request": request, "display_submission_card": False, "display_progress_card": False, "display_registration_card": True})
+
 
 @app.post("/api/register")
 async def register_participant(participant: ParticipantRegistration):

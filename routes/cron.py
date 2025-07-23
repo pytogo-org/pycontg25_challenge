@@ -33,30 +33,7 @@ participants = [
    "registered_at": "2025-07-18 00:57:36.553598+00",
    "experience_level": "intermediate"
  },
- {
-   "id": 6,
-   "full_name": "Uk'iva DAPAM",
-   "email": "wasscodeur228@gmail.com",
-   "github_username": "@dukst0n",
-   "registered_at": "2025-07-18 05:47:55.833491+00",
-   "experience_level": "beginner"
- },
- {
-   "id": 7,
-   "full_name": "omo wass",
-   "email": "omowass5@gmail.com",
-   "github_username": "omo wass",
-   "registered_at": "2025-07-18 06:45:03.603765+00",
-   "experience_level": "intermediate"
- },
- {
-   "id": 8,
-   "full_name": "Ibrahim",
-   "email": "ibrahim@pytogo.org",
-   "github_username": "",
-   "registered_at": "2025-07-18 07:11:46.511461+00",
-   "experience_level": "intermediate"
- },
+ 
 
  
 ]
