@@ -114,6 +114,10 @@ def register_page(request: Request):
 @app.post("/api/register")
 async def register_participant(participant: ParticipantRegistration):
     """Register a new participant for the challenge"""
+    closing_date = datetime(2025, 7, 23) + timedelta(days=3, hours=23, minutes=59, seconds=59)
+    closing_date = closing_date.replace(tzinfo=timezone.utc)
+    if datetime.now(timezone.utc) > closing_date:
+        raise HTTPException(status_code=400, detail="Registration is closed for this challenge")
     is_registered = get_record_by_email("participants", participant.email)
     if is_registered:
         raise HTTPException(status_code=400, detail="Participant already registered")
@@ -140,6 +144,7 @@ async def register_participant(participant: ParticipantRegistration):
 @app.post("/api/submit")
 async def submit_task(submission: TaskSubmission):
     """Submit a solution for a specific task"""
+    
     is_participant = get_record_by_email("participants", submission.participant_email)
     task = get_one_where("tasks", "day", int(submission.task_day))
     if not task:
@@ -180,26 +185,33 @@ async def get_progress(progress: ProgressInfo):
         raise HTTPException(status_code=404, detail="Participant not found")
 
     tasks = get_some_thing("tasks")
-    submissions = get_record_by_email("submissions", progress.participant_email)
 
-    submissions = [{
-        "task_day": 1,
-        "solution": 'Solution for task 1',
-        "explanation": 'Explanation for task 1'
-    }]
+
+
 
     task_progress = []
     for task in tasks:
         task_day = task.get("day")
+        task_start_at = datetime.fromisoformat(task["start_at"]).astimezone(timezone.utc)
+        now = datetime.now(timezone.utc)
+        if task_day is None or task_start_at is None:
+            continue
 
-        submission = next((s for s in submissions if s.get("task_day") == task_day), None)
+        if now >=task_start_at:
+            submission = get_some_where("submissions", "participant_email", progress.participant_email, "task_day", task_day)
+            if len(submission) > 0:
+                submission = submission[0]
+        else:
+            submission = None  
 
         if submission:
             task_progress.append({
                 "day": task_day,
                 "title_en": task.get("title_en"),
-                "status": "submitted",
+                "status": "submitted" if submission.get("solution") else "not submitted",
                 "solution": submission.get("solution"),
+                "has_started": True if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else False,
+                "not_started": "not started" if datetime.fromisoformat(task["start_at"]).isoformat() > now.isoformat() else "not submitted",
                 "explanation": submission.get("explanation"),
                 "deadline": datetime.fromisoformat(task["deadline"]).isoformat(),
                 "has_started": True if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else False
@@ -211,6 +223,7 @@ async def get_progress(progress: ProgressInfo):
                 "day": task_day,
                 "title_en": task.get("title_en"),
                 "status": "in progress" if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else "not submitted",
+                "not_started": "not started" if datetime.fromisoformat(task["start_at"]).isoformat() > now.isoformat() else "not submitted",
                 "deadline": datetime.fromisoformat(task["deadline"]).isoformat(),
                 "has_started": True if datetime.fromisoformat(task["start_at"]).isoformat() <= now.isoformat() else False
             })
@@ -218,12 +231,14 @@ async def get_progress(progress: ProgressInfo):
     stat_count = {
             "total_tasks": len(tasks),
             "tasks": [task for task in task_progress if task["has_started"]],
-            "total_submissions": len(submissions),
+            "total_submissions": sum(1 for task in task_progress if task["status"] == "submitted"),
+            "not_started": sum(1 for task in task_progress if task["status"] == "not submitted" and not task["has_started"]),
             "completed_tasks": sum(1 for task in task_progress if task["status"] == "submitted"),
             "in_progress_tasks": sum(1 for task in task_progress if task["status"] == "in progress"),
-            "pending_tasks": sum(1 for task in task_progress if task["status"] == "not submitted"),
             "late_submissions": sum(1 for task in task_progress if task["status"] == "not submitted" and task.get("deadline") < now.isoformat())
             }
+    if not task_progress:
+        raise HTTPException(status_code=404, detail="No tasks found for this participant")
 
 
     return {"progress": task_progress, "stats": stat_count}
