@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from datetime import datetime, timedelta, timezone
 from models import  ParticipantRegistration, ProgressInfo, TaskSubmission, TaskInfo
-from db import insert_into_table, get_some_thing, get_some_where, get_record_by_email, get_record_by_email
+from db import get_one_where, insert_into_table, get_some_thing, get_some_where, get_record_by_email, get_record_by_email
 from dotenv import load_dotenv
 from routes.cron import router as cron_router
 
@@ -119,20 +119,19 @@ async def register_participant(participant: ParticipantRegistration):
         raise HTTPException(status_code=400, detail="Participant already registered")
     try:
         data = participant.dict()
-        inserted_record = insert_into_table("participants", data)
-        print("before sending email")
-        if inserted_record:
-            print(f"Participant {participant.full_name} registered successfully.")
-            try:
+        
+        print(f"Participant {participant.full_name} registered successfully.")
+        try:
                 send_welcome_email(first_name=participant.full_name, participant_email=participant.email)
+                inserted_record = insert_into_table("participants", data)
                 print(f"Welcome email sent to {participant.email}")
-            except Exception as e:
+        except Exception as e:
                 print(f"Error sending welcome email: {e}")
-                raise HTTPException(status_code=500, detail="Failed to send welcome email")
-        else:
-            raise HTTPException(status_code=500, detail="Failed to register participant")
+                raise HTTPException(status_code=500, detail="Failed to send welcome email, please try again with different email.")
 
-        return {"message": "Participant registered successfully", "participant": inserted_record}
+        if inserted_record:
+            return {"message": "Participant registered successfully"}
+
     except Exception as e:
         print(f"Error inserting participant: {e}")
         raise HTTPException(status_code=500, detail="Participant already exists")
@@ -142,15 +141,20 @@ async def register_participant(participant: ParticipantRegistration):
 async def submit_task(submission: TaskSubmission):
     """Submit a solution for a specific task"""
     is_participant = get_record_by_email("participants", submission.participant_email)
+    task = get_one_where("tasks", "day", int(submission.task_day))
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
 
-    print(f"Participant exists: {is_participant}")
+    start_date = datetime.fromisoformat(task["start_at"]).astimezone(timezone.utc)
+    if datetime.now(timezone.utc) < start_date:
+        raise HTTPException(status_code=400, detail="Task has not started yet")
+    task_deadline = datetime.fromisoformat(task["deadline"]).astimezone(timezone.utc)
+    now = datetime.now(timezone.utc)
+    if now > task_deadline:
+        raise HTTPException(status_code=400, detail="Task deadline has passed")
     
     if not is_participant:
         raise HTTPException(status_code=404, detail="Participant not found. Please register first.")
-
-    # task = get_some_thing("tasks")
-    # if not task:
-    #     raise HTTPException(status_code=404, detail="Task not found")
 
     existing_submission = get_some_where("submissions", "participant_email", submission.participant_email, "task_day", submission.task_day)
     if existing_submission:
@@ -159,6 +163,7 @@ async def submit_task(submission: TaskSubmission):
     try:
         # type coverting the task_day to int
         submission.task_day = int(submission.task_day)
+        
         data = submission.dict()
         inserted_record = insert_into_table("submissions", data)
         return {"message": "Task submitted successfully", "submission": inserted_record}

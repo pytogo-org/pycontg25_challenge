@@ -97,12 +97,12 @@ def send_pre_challenge_info_email(first_name, participant_email=None):
     )
     send_email_with_or_without_attachment(body, subject, receiver_email=participant_email)
 
-def submission_instruction_email(first_name, fr_titre, en_titre, fr_link, en_link, participant_email=None):
+def submission_instruction_email(first_name, fr_title, en_title, fr_link, en_link, participant_email=None):
     """
     Sends the submission instruction email to the participant.
     """
     from welcome import get_submission_instruction_email
-    subject, body = get_submission_instruction_email(first_name, fr_titre, en_titre, fr_link, en_link)
+    subject, body = get_submission_instruction_email(first_name, fr_title, en_title, fr_link, en_link)
     body = render_email_template(
         first_name=first_name,
         message=body
@@ -111,6 +111,12 @@ def submission_instruction_email(first_name, fr_titre, en_titre, fr_link, en_lin
 
 if __name__ == "__main__":
     
+    already_sent_day_1 = emails_sent_successfully = [
+]
+
+
+    failed_emails = []
+
     today = date.today()
     day_number = (today - date(2025, 7, 23)).days + 1
     index = day_number - 1
@@ -135,14 +141,35 @@ if __name__ == "__main__":
                 print(f"No email found for participant {participant['full_name']}. Skipping.")
                 continue
             print(f"Sending daily email for day {day_number} to {first_name} at {participant_email}... ")
-            submission_instruction_email(
-                first_name=first_name,
-                fr_titre=fr_title,
-                en_titre=en_title,
-                fr_link=fr_link,
-                en_link=en_link,
-                participant_email=participant_email
-            )
-            print(f"Email sent to {first_name} at {participant_email}.")
+            if participant_email in already_sent_day_1:
+                print(f"Email already sent to {participant_email} for day {day_number}. Skipping.")
+            else:
+                try:
+                    submission_instruction_email(
+                        first_name=first_name,
+                        fr_title=fr_title,
+                        en_title=en_title,
+                        fr_link=fr_link,
+                        en_link=en_link,
+                        participant_email=participant_email
+                    )
+                    print(f"Email sent to {participant_email} for day {day_number}.")
+                except Exception as e:
+                    print(f"Failed to send email to {participant_email} for day {day_number}: {e}")
+                    failed_emails.append({"email": participant_email, "reason": str(e)})
+                    continue
+      
+        
+        len_already_sent_day_1 = len(already_sent_day_1)
+        print(f"Already sent emails for day 1: {len_already_sent_day_1}")
+        len_failed_emails = len(failed_emails)
+        print(f"Failed to send emails: {len_failed_emails}")
+        if failed_emails:
+            print(f"Failed to send emails to {len(failed_emails)} participants:")
+            for failed in failed_emails:
+                print(f"Email: {failed['email']}, Reason: {failed['reason']}")
+        else:
+            print("All emails sent successfully.")
+
     else:
         print(f"Invalid day number: {day_number}. No task found for this day.")
