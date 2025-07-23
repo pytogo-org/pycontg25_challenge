@@ -103,7 +103,7 @@ def submit_page(request: Request):
 @app.get('/progress')
 def progress_page(request: Request):
     """Serve the progress page"""
-    return templates.TemplateResponse("home.html", {"request": request, "display_submission_card": True, "display_progress_card": True, "display_registration_card": False})
+    return templates.TemplateResponse("home.html", {"request": request, "display_submission_card": False, "display_progress_card": True, "display_registration_card": False})
 
 @app.get('/register')
 def register_page(request: Request):
