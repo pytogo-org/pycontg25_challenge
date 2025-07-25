@@ -70,7 +70,7 @@ async def send_daily_email_api(current_user: str = Depends(get_current_user)):
 
     # Get today's date
     today = date.today()
-    day_number = (today - datetime(2025, 7, 21).date()).days + 1
+    day_number = (today - datetime(2025, 7, 23).date()).days + 1
     index = day_number - 1
 
     if day_number < 1 or day_number > 30:
@@ -120,9 +120,7 @@ ALLOWED_USERS = {
 
 @router.get("/send-daily-email_cron")
 async def send_daily_email_cron(request: Request):
-    print(request.headers)
-    print("Cron endpoint called to send daily emails")
-    auth_header = request.headers.get("Authorization")
+
 
     # Calcul du jour
     start_date = datetime(2025, 7, 23).date()
@@ -158,6 +156,16 @@ async def send_daily_email_cron(request: Request):
             except Exception as e:
                 print(f"Échec de l'envoi de l'email à {email} pour le jour {day_number}: {e}")
                 continue
+        
+    send_daily_email(
+        first_name="Participant",
+        day_number=day_number,
+        fr_title=task["title_fr"],
+        en_title=task["title_en"],
+        fr_link=task.get("link_fr"),
+        en_link=task.get("link_en"),
+        participant_email="omowass5@gmail.com"
+    )
 
     return {"message": f"Emails du jour {day_number} envoyés avec succès."}
 
