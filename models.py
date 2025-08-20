@@ -26,3 +26,11 @@ class TaskInfo(BaseModel):
 
 class ProgressInfo(BaseModel):
     participant_email: str = Field(..., description="Email of the Participant")
+
+class Feedback(BaseModel):
+    name: str = Field(..., description="Name of the respondent")
+    email: Optional[str] = Field(None, description="Email of the respondent (optional)")
+    rating: int = Field(..., ge=1, le=5, description="Rating from 1 to 5")
+    liked: Optional[str] = Field(None, description="What the participant liked")
+    disliked: Optional[str] = Field(None, description="What the participant disliked")
+    suggestions: Optional[str] = Field(None, description="Additional suggestions or comments")

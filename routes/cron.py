@@ -119,8 +119,14 @@ ALLOWED_USERS = {
 }
 
 @router.get("/send-daily-email_cron")
-async def send_daily_email_cron(request: Request):
+async def send_daily_email_cron(request: Request, current_user: str = Depends(get_current_user)):
 
+    # Vérification des autorisations de l'utilisateur
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    if current_user["role"] not in ["Admin", "Developer-support"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    
 
     # Calcul du jour
     start_date = datetime(2025, 7, 23).date()
@@ -133,6 +139,7 @@ async def send_daily_email_cron(request: Request):
 
     task = tasks[index]
 
+    number_emails_sent = 0
     for participant in participants:
         first_name = participant["full_name"]
         email = participant["email"]
@@ -142,6 +149,9 @@ async def send_daily_email_cron(request: Request):
             continue
         else:
             try:
+                if number_emails_sent >= 189:
+                    print("Limite d'envoi d'emails atteinte pour aujourd'hui.")
+                    break
                 send_daily_email(
                     first_name=first_name,
                     day_number=day_number,
@@ -153,6 +163,9 @@ async def send_daily_email_cron(request: Request):
                 )
                 log_email_sent(email, day_number)
                 print(f"Email envoyé à {email} pour le jour {day_number}.")
+                number_emails_sent += 1
+                print(f"Nombre d'emails envoyés: {number_emails_sent}")
+
             except Exception as e:
                 print(f"Échec de l'envoi de l'email à {email} pour le jour {day_number}: {e}")
                 continue
@@ -170,10 +183,16 @@ async def send_daily_email_cron(request: Request):
     return {"message": f"Emails du jour {day_number} envoyés avec succès."}
 
 @router.get("/send-pre-challenge-info-email")
-async def send_pre_challenge_info_email_api():
+async def send_pre_challenge_info_email_api(current_user: str = Depends(get_current_user)):
     """
     Endpoint to send the pre-challenge information email to participants.
     """
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    # Check the user role or permissions if needed
+    if current_user["role"] not in ["Admin", "Developer-support"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
     
     for participant in participants:
         first_name = participant["full_name"]

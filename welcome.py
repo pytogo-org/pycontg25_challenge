@@ -315,12 +315,533 @@ def get_submission_instruction_email(first_name, fr_title, en_title, fr_link, en
     return subject, body
 
 
+def new_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link):
+
+        subject = f"[Jour {day_number} / Day {day_number}] {fr_title} | {en_title} – Tu progresses bien ! Keep going!"
+
+        body = f"""
+           <div style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333; padding: 20px;">
+
+            <!-- VERSION FRANÇAISE -->
+            <p><strong>🇫🇷 Version française</strong></p>
+
+            <h2>Bonjour {first_name}, Hello!</h2>
+            
+            <h2 style="color: #1a73e8;">Challenge Python – Jour { day_number }</h2>
+
+            <p>
+                Félicitations pour ta participation continue au <strong>Challenge 30 Jours de Python</strong> ! Tu fais un travail formidable, et on t’encourage à continuer ainsi.
+            </p>
+
+            <p>
+                Si tu n’as pas encore soumis toutes les tâches, ce n’est pas grave. Tu peux toujours le faire à ton rythme. L’objectif est de <strong>progresser régulièrement</strong>, pas d’aller vite.
+            </p>
+
+            <p>
+                Nous avons remarqué que plusieurs personnes rencontrent des difficultés avec GitHub. Pas d’inquiétude ! Voici quelques ressources utiles pour apprendre à utiliser GitHub :
+            </p>
+
+            <ul>
+                
+                <li><a href="https://www.youtube.com/watch?v=hPfgekYUKgk" target="_blank">Les Tutos - Débuter avec Git et Github en 30 min</a></li>
+                <li><a href="https://rtavenar.github.io/tuto-git/book.pdf" target="_blank">Tutoriel d'introduction à git</a></li>
+                <li><a href="https://www.youtube.com/watch?v=X3KCX99I2pQ&t=94s" target="_blank">Débutant : Comment utiliser GitHub</a></li>
+                <li><a href="https://www.youtube.com/watch?v=4o9qzbssfII" target="_blank">Git & GitHub pour les débutants (vidéo YouTube)</a></li>
+                <li><a href="https://learngitbranching.js.org/?locale=fr_FR" target="_blank">Learn Git Branching (interactif)</a></li>
+                <li><a href="https://www.atlassian.com/fr/git/tutorials/what-is-git" target="_blank">Guide Git par Atlassian</a></li>
+            </ul>
+
+            <p>
+                Rejoins aussi le canal <code><a href="https://discord.com/channels/1367111367102042112/1367111370176331836" target="_blank">#workshop/a></code> sur Discord pour poser tes questions et suivre les sessions en direct.
+            </p>
+
+            <p>
+                📌 Astuce : Si tu suis la version française du document, pense à consulter la version anglaise aussi. Cela peut t’aider à mieux comprendre.
+            </p>
+
+            <p>
+                <strong>Ressources du jour :</strong><br>
+                ➤ <a href="{ fr_link }" target="_blank">Document du jour { day_number } (FR)</a><br>
+                ➤ <a href="{ en_link }" target="_blank">Document of the day { day_number } (EN)</a>
+            </p>
+
+            <p>
+                <strong>Soumettre ta solution :</strong><br>
+                <a href="https://challenge.pytogo.org/submit" target="_blank">https://challenge.pytogo.org/submit</a><br>
+                Tu peux y coller ton code ou envoyer un lien (GitHub, Replit, Google Drive…).
+            </p>
+
+            <p>
+                Pour toute question :<br>
+                📧 challenge@pytogo.org<br>
+                📱 +228 98 27 38 05 / +228 92 55 59 87
+            </p>
+
+            <hr style="margin: 40px 0;">
+
+            <!-- ENGLISH VERSION -->
+            <p><strong>🇬🇧 English version</strong></p>
+
+            <h2>Hello {first_name}, Bonjour!</h2>
+            <h2 style="color: #1a73e8;">Python Challenge – Day { day_number }</h2>
+
+            <p>
+                Congratulations on your progress in the <strong>30-Day Python Challenge</strong>! You're doing an amazing job – keep going!
+            </p>
+
+            <p>
+                If you haven’t submitted all the tasks yet, no worries. You can still do it. The key is <strong>consistency</strong>, not speed.
+            </p>
+
+            <p>
+                We've noticed that some participants are facing issues with GitHub. Don’t worry! Here are some helpful resources to learn GitHub:
+            </p>
+
+            <ul>
+                <li><a href="https://www.youtube.com/watch?v=RGOj5yH7evk" target="_blank">Git & GitHub for Beginners (YouTube)</a></li>
+                <li><a href="https://learngitbranching.js.org/" target="_blank">Learn Git Branching (Interactive)</a></li>
+                <li><a href="https://www.atlassian.com/git/tutorials/what-is-git" target="_blank">Git Tutorial by Atlassian</a></li>
+            </ul>
+
+            <p>
+                Join our <code><a href="https://discord.com/channels/1367111367102042112/1367111370176331836" target="_blank">#workshop</a></code> channel on Discord to ask questions or attend live sessions.
+            </p>
+
+            <p>
+                📌 Tip: If you read the document in French and find inconsistencies, refer to the English version for clarification.
+            </p>
+
+            <p>
+                <strong>Today's resources:</strong><br>
+                ➤ <a href="{ fr_link }" target="_blank">French Document</a><br>
+                ➤ <a href="{ en_link }" target="_blank">English Document</a>
+            </p>
+
+            <p>
+                <strong>Submit your solution:</strong><br>
+                <a href="https://challenge.pytogo.org/submit" target="_blank">https://challenge.pytogo.org/submit</a><br>
+                You can paste your code or send a link (GitHub, Replit, Google Drive…).
+            </p>
+
+            <p>
+                For support:<br>
+                📧 challenge@pytogo.org<br>
+                📱 +228 98 27 38 05 / +228 98 77 66 82
+            </p>
+
+        </div>
+        """
+        return subject, body
+
+
+def new_new_mail_daily_mail(participant, day_number, fr_title, en_title, fr_link, en_link):
+    previous_day = day_number - 1
+    subject = f"[Jour {day_number}] / [Day {day_number}] Bravo pour ta régularité 👏 | Rendez-vous au workshop du 31 juillet !"
+    subject = f"[Jour {day_number}]/ [Day {day_number}] {participant} Ensemble on avance ! 🌍 | Bilan et discussion le 31 juillet sur Discord"
+
+
+    html = f"""
+    <div style="font-family:Arial, sans-serif; line-height:1.6; font-size:16px; color:#333; max-width:650px; margin:auto;">
+        <p>Bonjour {participant},</p>
+
+        <p>👏 <strong>Félicitations</strong> pour ta constance jusqu’au <strong>jour {previous_day}</strong> du challenge ! Tu fais déjà un excellent travail. Continue à ton rythme, l’important c’est la régularité et la compréhension.</p>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>📌 Jour {day_number} – Nouvelle tâche</h3>
+        <p>➡️ Titre de la tâche : <strong>{fr_title}</strong></p>
+          ➤ <a href="{ fr_link }" target="_blank">Document du jour { day_number } (FR)</a><br>
+          ➤ <a href="{ en_link }" target="_blank">Document of the day { day_number } (EN)</a>
+        <p style="color:#d14;"><strong>🔁 Pour éviter toute confusion liée à la traduction, pense à consulter aussi la version anglaise !</strong></p>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>📝 Soumettre ta solution</h3>
+        <p>Soumets ta solution ici : <a href="https://challenge.pytogo.org/submit">https://challenge.pytogo.org/submit</a></p>
+        <p>Tu peux soit <strong>coller ton code</strong>, soit envoyer un <strong>lien vers ton fichier ou ton dépôt GitHub</strong>.</p>
+
+        <h4>📘 Ressources GitHub</h4>
+        <ul>
+            <li><a href="https://www.youtube.com/watch?v=hPfgekYUKgk">Les Tutos - Débuter avec Git et Github en 30 min</a></li>
+            <li><a href="https://www.youtube.com/watch?v=X3KCX99I2pQ&t=94s">Les Tutos - Git et Github pour les débutants</a></li>
+            <li><a href="https://openclassrooms.com/fr/courses/2342361-gerez-votre-code-avec-git-et-github">OpenClassrooms - Git & GitHub (FR)</a></li>
+            <li><a href="https://rtavenar.github.io/tuto-git/book.pdf" target="_blank">Tutoriel d'introduction à git</a></li>
+            <li><a href="https://www.youtube.com/watch?v=X3KCX99I2pQ&t=94s" target="_blank">Débutant : Comment utiliser GitHub</a></li>
+            <li><a href="https://www.youtube.com/watch?v=4o9qzbssfII" target="_blank">Git & GitHub pour les débutants (vidéo YouTube)</a></li>
+            <li><a href="https://learngitbranching.js.org/?locale=fr_FR" target="_blank">Learn Git Branching (interactif)</a></li>
+            <li><a href="https://www.atlassian.com/fr/git/tutorials/what-is-git" target="_blank">Guide Git par Atlassian</a></li>
+        </ul>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>📢 Partage ton progrès</h3>
+        <p>Publie ton avancée sur <strong>LinkedIn, Twitter/X ou Facebook</strong> pour inspirer d’autres personnes.</p>
+        <p>Utilise les hashtags suivants :</p>
+        <code>#PyConTogo2025 #PythonTogo #Challenge30DaysOfPython #PythonTogoChallenge #30DaysOfPythonWithPythonTogo</code>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>🎙️ Discord & Workshop</h3>
+        <p>Tu peux rejoindre notre serveur Discord ici : <a href="https://pytogo.org/discord">https://pytogo.org/discord</a></p>
+        <p>Pose tes questions dans le canal vocal <strong>#workshop</strong>.</p>
+        <p><strong>📅 Jeudi 31 juillet</strong> en soirée, nous ferons un grand atelier vocal : bilan de la première semaine et explication complète des tâches passées. Ne rate pas ça !</p>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <p style="text-align:center; color:#666;">🇬🇧 English version below</p>
+
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+
+        <p>Hello dear {participant},</p>
+
+        <p>👏 <strong>Congrats</strong> for reaching <strong>Day {previous_day}</strong> of the challenge! You're doing great. Keep moving at your own pace — it’s all about consistency and learning.</p>
+
+        <h3>📌 Day {day_number} – New Task</h3>
+        <p>➡️ Task title: <strong>{en_title}</strong></p>
+          ➤ <a href="{ fr_link }" target="_blank">Document du jour { day_number } (FR)</a><br>
+          ➤ <a href="{ en_link }" target="_blank">Document of the day { day_number } (EN)</a>
+        <p style="color:#d14;"><strong>🔁 Please check the English version to avoid any typo issues in the translated French version.</strong></p>
+
+        <h3>📝 Submit your work</h3>
+        <p>Submit here: <a href="https://challenge.pytogo.org/submit">https://challenge.pytogo.org/submit</a></p>
+        <p>You can either <strong>paste your code</strong> or share a <strong>link to a file or GitHub repo</strong>.</p>
+
+        <h4>📘 GitHub Resources</h4>
+        <ul>
+            <li><a href="https://www.youtube.com/watch?v=RGOj5yH7evk">Git and GitHub for Beginners - Crash Course</a></li>
+            <li><a href="https://docs.github.com/en/get-started/quickstart">GitHub Docs (EN)</a></li>
+        </ul>
+
+        <h3>📣 Share your progress</h3>
+        <p>Post on <strong>LinkedIn, Twitter/X or Facebook</strong> to show what you’ve learned.</p>
+        <p>Use these hashtags:</p>
+        <code>#PyConTogo2025 #PythonTogo #Challenge30DaysOfPython #PythonTogoChallenge #30DaysOfCodeWithPythonTogo</code>
+
+        <h3>🎙️ Discord & Workshop</h3>
+        <p>Join our Discord server here: <a href="https://pytogo.org/discord">https://pytogo.org/discord</a></p>
+        <p>Use the <strong><a href="https://discord.com/channels/1367111367102042112/1367111370176331836">#workshop</a></strong> voice channel to ask your questions.</p>
+        <p><strong>📅 On Thursday, July 31</strong> in the evening, we’ll host a big community workshop to review the first week and explain all past tasks in detail. Don’t miss it!</p>
+
+        <p style="margin-top:30px;">💙 <em>The Python Togo Team</em><br/>
+        📩 challenge@pytogo.org</p>
+    </div>
+    """
+    return subject, html
+    
+
+def recap_mail_day(participant, fr_link, en_link):
+    subject = f"📚 [Récapitulatif semaine 1] / [Week 1 Recap] – Merci d’avoir suivi le live !"
+    
+    html = f"""
+    <div style="font-family:Arial, sans-serif; font-size:16px; line-height:1.6; color:#333; max-width:650px; margin:auto;">
+        <p>Bonjour {participant},</p>
+
+        <p>Merci à tous ceux qui ont participé au <strong>workshop de ce soir</strong> sur Discord. 🙌</p>
+        <p>Si tu l’as manqué, pas grave ! Tu peux continuer à ton rythme.</p>
+
+        <p>Voici le document récapitulatif de la première semaine :</p>
+        <ul>
+            <li><a href="{fr_link}" target="_blank">📄 Document récapitulatif (FR)</a></li>
+            <li><a href="{en_link}" target="_blank">📄 Recap document (EN)</a></li>
+        </ul>
+
+        <p>Bonne lecture et bonne continuation dans le challenge ! 🚀</p>
+
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+        <p style="text-align:center; color:#666;">🇬🇧 English version below</p>
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+
+        <p>Hello {participant},</p>
+
+        <p>Thanks to everyone who joined today's <strong>Discord live workshop</strong> 🙌</p>
+        <p>If you missed it, don’t worry — you can continue on your own pace.</p>
+
+        <p>Here is the recap document for the first week:</p>
+        <ul>
+            <li><a href="{fr_link}" target="_blank">📄 Récapitulatif (FR)</a></li>
+            <li><a href="{en_link}" target="_blank">📄 Recap Document (EN)</a></li>
+        </ul>
+
+        <p>Keep going strong! 💪</p>
+
+        <p style="margin-top:30px;">💙 <em>The Python Togo Team</em><br/>
+        📩 challenge@pytogo.org</p>
+    </div>
+    """
+    
+    return subject, html
+
+
+def daily_task_mail_after_live(participant, day_number, fr_title, en_title, fr_link, en_link):
+    subject = f"[Jour {day_number}] / [Day {day_number}] – Nouvelle mission & lien de soumission 🧠💻"
+
+    html = f"""
+    <div style="font-family:Arial, sans-serif; font-size:16px; line-height:1.6; color:#333; max-width:650px; margin:auto;">
+        <p>Bonjour {participant},</p>
+
+        <p>Le challenge continue, et chaque ligne de code te rapproche de ton prochain niveau ! 🚀</p>
+        <p>Que tu aies assisté au live du 31 juillet ou non, l'important est de progresser à ton rythme.</p>
+
+        <h3>📌 Tâche du jour {day_number}</h3>
+        <p><strong>{fr_title}</strong></p>
+        <ul>
+            <li><a href="{fr_link}" target="_blank">📄 Document du jour (FR)</a></li>
+            <li><a href="{en_link}" target="_blank">📄 Document of the day (EN)</a></li>
+        </ul>
+
+        <p>✅ Une fois ta solution prête, pense à la soumettre ici :  
+        <a href="https://challenge.pytogo.org/submit" target="_blank">https://challenge.pytogo.org/submit</a></p>
+
+
+        <p style="color:#d14;"><strong>👉 Consulte la version anglaise pour éviter les erreurs de traduction.</strong></p>
+
+        <p>Continue à coder, à apprendre et à te dépasser. On est avec toi 💪🏽</p>
+
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+        <p style="text-align:center; color:#666;">🇬🇧 English version below</p>
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+
+        <p>Hello {participant},</p>
+
+        <p>The challenge goes on — and every line of code brings you closer to mastery! 💡</p>
+        <p>Whether or not you joined the July 31st live session, what matters most is learning at your own pace.</p>
+
+        <h3>📌 Day {day_number} Task</h3>
+        <p><strong>{en_title}</strong></p>
+        <ul>
+            <li><a href="{fr_link}" target="_blank">📄 Document du jour (FR)</a></li>
+            <li><a href="{en_link}" target="_blank">📄 Document of the day (EN)</a></li>
+        </ul>
+
+        <p>✅ Once you're done, submit your solution here:  
+        <a href="https://challenge.pytogo.org/submit" target="_blank">https://challenge.pytogo.org/submit</a></p>
+
+        <p>📺 You can also catch up on past sessions and tutorials on our YouTube channel:  
+        <a href="https://www.youtube.com/@PythonTogo" target="_blank">https://www.youtube.com/@PythonTogo</a></p>
+
+        <p style="color:#d14;"><strong>👉 Check the English version to avoid translation issues.</strong></p>
+
+        <p>Keep coding, keep learning, and keep showing up. We're cheering you on! 👏🏽</p>
+
+        <p style="margin-top:30px;">💙 <em>The Python Togo Team</em><br/>
+        📩 challenge@pytogo.org</p>
+    </div>
+    """
+    return subject, html
+
+
+def daily_mail_with_task(participant, day_number, fr_title, en_title, fr_link, en_link):
+    previous_day = day_number - 1
+    subject = f"[Jour {day_number}] / [Day {day_number}] – Nouvelle tâche + Félicitations 🎉"
+
+    html = f"""
+    <div style="font-family:Arial, sans-serif; font-size:16px; line-height:1.6; color:#333; max-width:650px; margin:auto;">
+        <p>Bonjour {participant},</p>
+
+        <h2>🎉 Bravo ! Tu as validé le jour {previous_day} du challenge</h2>
+        <p>Peu importe si tu as tout compris ou non, l’important est d’avancer à ton rythme.  
+        Ceux qui ont compris : continuez sur cette lancée 💪.  
+        Ceux qui ont eu des difficultés : pas de souci, reviens sur les jours précédents et pose tes questions dans notre  
+        <a href="https://discord.com/channels/1367111367102042112/1367111370176331836" target="_blank">channel #workshop</a> sur Discord.</p>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>📌 Jour {day_number} – Nouvelle tâche</h3>
+        <p><strong>{fr_title}</strong></p>
+        ➤ <a href="{fr_link}" target="_blank">Document du jour {day_number} (FR)</a><br>
+        ➤ <a href="{en_link}" target="_blank">Document of the day {day_number} (EN)</a>
+        <p style="color:#d14;"><strong>Pense à consulter aussi la version anglaise pour éviter toute confusion liée à la traduction.</strong></p>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>🎟️ PyCon Togo 2025</h3>
+        <p>L’événement aura lieu le <strong>23 août 2025</strong> !  
+
+        <p>🙏 Nous nous excusons pour notre calme de ces derniers jours — nous sommes en plein dans les préparatifs du PyCon Togo.  
+        Mais ne t’inquiète pas, il y aura une <strong>grande session récapitulative</strong> avant la fin du challenge.</p>
+
+        <p>🚀 Continue comme ça et on se retrouve bientôt !</p>
+
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+        <p style="text-align:center; color:#666;">🇬🇧 English version below</p>
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+
+        <p>Hello {participant},</p>
+
+        <h2>🎉 Well done! You completed day {previous_day} of the challenge</h2>
+        <p>It doesn’t matter if you’ve understood everything yet — what matters is making steady progress.  
+        If you understood: keep it up 💪.  
+        If you had difficulties: no problem, revisit previous days and ask your questions in our  
+        <a href="https://discord.com/channels/1367111367102042112/1367111370176331836" target="_blank">#workshop channel</a> on Discord.</p>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>📌 Day {day_number} – New task</h3>
+        <p><strong>{en_title}</strong></p>
+        ➤ <a href="{fr_link}" target="_blank">Document du jour {day_number} (FR)</a><br>
+        ➤ <a href="{en_link}" target="_blank">Document of the day {day_number} (EN)</a>
+        <p style="color:#d14;"><strong>Make sure to check the English version to avoid translation confusion.</strong></p>
+
+        <hr style="border:none; border-top:1px solid #ddd;"/>
+
+        <h3>🎟️ PyCon Togo 2025</h3>
+        <p>The event will take place on <strong>August 23, 2025</strong>!  
+
+        <p>🙏 Sorry for being a bit quiet lately — we’ve been busy preparing for PyCon Togo.  
+        But don’t worry, we’ll have a <strong>big recap session</strong> before the end of the challenge.</p>
+
+        <p>🚀 Keep it up and see you soon!</p>
+
+        <p style="margin-top:30px;">💙 <em>The Python Togo Team</em><br/>
+        📩 challenge@pytogo.org</p>
+    </div>
+    """
+    return subject, html
+
+
+def mail_day_23(participant, day_number, fr_title, en_title, fr_link, en_link):
+ 
+    subject = f"[Day {day_number} / Jour {day_number}] 🚀 You're almost there! | Plus que quelques pas!"
+
+    html = f"""
+    <div style="font-family:Arial, sans-serif; line-height:1.6; font-size:16px; color:#333; max-width:650px; margin:auto;">
+        <p>Hi {participant},</p>
+
+        <p>🚀 <strong>Only one week left!</strong> You’ve made it to <strong>Day {day_number}</strong>, and the finish line is almost in sight.  
+        Every single step you’ve taken has brought you closer — and this journey is proof of your dedication. Keep that momentum going! 💪</p>
+
+        <p>⚠️ Don’t forget: <strong>Task 30</strong> will be special. Be ready for it!</p>
+
+        <h3>📌 Today's Task</h3>
+        <p><strong>{en_title}</strong></p>
+        ➤ <a href="{fr_link}" target="_blank">Document du jour (FR)</a><br>
+        ➤ <a href="{en_link}" target="_blank">Document of the day (EN)</a>
+
+        <h3>📚 Keep going after the challenge</h3>
+        <p>Join <strong>Genepy</strong> under Python Togo to continue learning and taking on new challenges:</p>
+        <p><a href="https://genepy.org/teams/pythontogo">https://genepy.org/teams/pythontogo</a></p>
+
+        <h3>💬 Stay connected</h3>
+        <p>Ask questions and exchange ideas in our <strong>#workshop</strong> channel on Discord:</p>
+        <p><a href="https://discord.com/channels/1367111367102042112/1367111370176331836">Direct link to #workshop</a></p>
+
+        <hr style="border:none; border-top:1px dashed #bbb; margin:30px 0;"/>
+        <p style="text-align:center; color:#666;">🇫🇷 Version française ci-dessous</p>
+        <hr style="border:none; border-top:1px dashed #bbb;"/>
+
+        <p>Salut {participant},</p>
+
+        <p>🚀 <strong>Encore une semaine !</strong> Tu es arrivé jusqu’au <strong>jour {day_number}</strong> et la ligne d’arrivée est tout proche.  
+        Chaque pas que tu as fait t’a rapproché de la fin — cette aventure prouve ta persévérance. Continue sur ta lancée ! 💪</p>
+
+        <p>⚠️ N’oublie pas : <strong>la tâche 30</strong> sera spéciale. Sois prêt !</p>
+
+        <h3>📌 Tâche du jour</h3>
+        <p><strong>{fr_title}</strong></p>
+        ➤ <a href="{fr_link}" target="_blank">Document du jour (FR)</a><br>
+        ➤ <a href="{en_link}" target="_blank">Document of the day (EN)</a>
+
+        <h3>📚 Continue après le challenge</h3>
+        <p>Rejoins <strong>Genepy</strong> sous Python Togo pour continuer à apprendre et relever de nouveaux défis :</p>
+        <p><a href="https://genepy.org/teams/pythontogo">https://genepy.org/teams/pythontogo</a></p>
+
+        <h3>💬 Reste connecté</h3>
+        <p>Pose tes questions et échange avec la communauté dans notre channel <strong>#workshop</strong> sur Discord :</p>
+        <p><a href="https://discord.com/channels/1367111367102042112/1367111370176331836">Lien direct vers #workshop</a></p>
+
+        <p style="margin-top:30px;">💙 <em>The Python Togo Team</em><br/>
+        📩 challenge@pytogo.org</p>
+    </div>
+    """
+    return subject, html
+
+def mail_day_bilingual(participant, day_number, fr_title, en_title, fr_link, en_link):
+    previous_day = day_number - 1
+    subject = f"[Jour {day_number}] / [Day {day_number}] On continue | Nouvelle tâche + Vercel + Discord"
+
+    html = f"""
+    <div style="font-family:Arial, sans-serif; line-height:1.6; font-size:16px; color:#333; max-width:680px; margin:auto;">
+        <!-- ====== FRANÇAIS ====== -->
+        <p>Bonjour {participant},</p>
+
+        <p>Tu as tenu jusqu’au <strong>jour {previous_day}</strong>. On garde le cap : l’objectif n’est pas de dépasser les autres, mais de <strong>te dépasser toi-même</strong>, un pas après l’autre.</p>
+
+        <hr style="border:none; border-top:1px solid #ddd; margin:18px 0;"/>
+
+        <h3 style="margin:0 0 8px;">Jour {day_number} — Tâche du jour</h3>
+        <p style="margin:0 0 6px;">Titre (FR) : <strong>{fr_title}</strong></p>
+        <p style="margin:0 0 10px;">Titre (EN) : <strong>{en_title}</strong></p>
+        <p style="margin:0 0 6px;">➤ <a href="{fr_link}" target="_blank">Document du jour {day_number} (FR)</a></p>
+        <p style="margin:0 0 10px;">➤ <a href="{en_link}" target="_blank">Document of the day {day_number} (EN)</a></p>
+        <p style="color:#a11; margin:6px 0 0;"><strong>Astuce :</strong> pour éviter d’éventuelles coquilles de traduction, jette aussi un œil à la version anglaise.</p>
+
+        <h3 style="margin:18px 0 8px;">Déploiement</h3>
+        <p>Besoin de mettre en ligne ? Essaie <strong>Vercel</strong> (offre gratuite) :</p>
+        <p style="margin:0 0 6px;">• Site : <a href="https://vercel.com" target="_blank">https://vercel.com</a></p>
+        <p style="margin:0 0 10px;">• Docs utiles : <a href="https://matiasfuentes.hashnode.dev/how-to-deploy-a-flask-web-app-on-vercel" target="_blank">https://matiasfuentes.hashnode.dev/how-to-deploy-a-flask-web-app-on-vercel</a> &nbsp;|&nbsp; <a href="https://vercel.com/guides" target="_blank">Guides</a></p>
+
+        <h3 style="margin:18px 0 8px;">Soumettre ta solution</h3>
+        <p>Dépose ton travail ici : <a href="https://challenge.pytogo.org/submit" target="_blank">https://challenge.pytogo.org/submit</a><br/>
+        (colle le code ou partage un lien — fichier ou dépôt GitHub)</p>
+
+        <h3 style="margin:18px 0 8px;">Discord & séance questions</h3>
+        <p>Des questions ? Passe sur le serveur Discord :</p>
+        <p style="margin:0 0 6px;">• Rejoindre : <a href="https://pytogo.org/discord" target="_blank">https://pytogo.org/discord</a></p>
+        <p style="margin:0 0 10px;">• Accès direct au canal <strong>#workshop</strong> : <a href="https://discord.com/channels/1367111367102042112/1367111370176331836" target="_blank">ouvrir le canal</a></p>
+
+        <h3 style="margin:18px 0 8px;">PyCon Togo 2025</h3>
+        <p><strong>Samedi 23 août 2025</strong> — reste à l’écoute pour la confirmation finale du lieu.<br/>
+        Lieu provisoire : <strong>Amphithéâtre de l’UniPod, Université de Lomé</strong>.</p>
+
+        <hr style="border:none; border-top:1px dashed #bbb; margin:22px 0;"/>
+        <p style="text-align:center; color:#666; margin:0;">🇬🇧 English version below</p>
+        <hr style="border:none; border-top:1px dashed #bbb; margin:12px 0 18px;"/>
+
+        <!-- ====== ENGLISH ====== -->
+        <p>Hello {participant},</p>
+
+        <p>You’ve stayed consistent up to <strong>Day {previous_day}</strong>. Keep your eyes on the goal: not to outpace others, but to <strong>outgrow yesterday’s you</strong>.</p>
+
+        <h3 style="margin:0 0 8px;">Day {day_number} — Today’s task</h3>
+        <p style="margin:0 0 6px;">Title (FR): <strong>{fr_title}</strong></p>
+        <p style="margin:0 0 10px;">Title (EN): <strong>{en_title}</strong></p>
+        <p style="margin:0 0 6px;">➤ <a href="{fr_link}" target="_blank">Document du jour {day_number} (FR)</a></p>
+        <p style="margin:0 0 10px;">➤ <a href="{en_link}" target="_blank">Document of the day {day_number} (EN)</a></p>
+        <p style="color:#a11; margin:6px 0 0;"><strong>Note:</strong> if you read the French doc, cross-check the English version to avoid possible translation typos.</p>
+
+        <h3 style="margin:18px 0 8px;">Deployment</h3>
+        <p>Ship it with <strong>Vercel</strong> (free tier available):</p>
+        <p style="margin:0 0 6px;">• Site: <a href="https://vercel.com" target="_blank">https://vercel.com</a></p>
+        <p style="margin:0 0 10px;">• Docs: <a href="https://matiasfuentes.hashnode.dev/how-to-deploy-a-flask-web-app-on-vercel" target="_blank">https://matiasfuentes.hashnode.dev/how-to-deploy-a-flask-web-app-on-vercel</a> &nbsp;|&nbsp; <a href="https://vercel.com/guides" target="_blank">Guides</a></p>
+
+        <h3 style="margin:18px 0 8px;">Submit your work</h3>
+        <p>Submit here: <a href="https://challenge.pytogo.org/submit" target="_blank">https://challenge.pytogo.org/submit</a><br/>
+        (paste code or share a link — file or GitHub repo)</p>
+
+        <h3 style="margin:18px 0 8px;">Discord & live help</h3>
+        <p>Need help? Join the Discord server:</p>
+        <p style="margin:0 0 6px;">• Join: <a href="https://pytogo.org/discord" target="_blank">https://pytogo.org/discord</a></p>
+        <p style="margin:0 0 10px;">• Direct access to <strong>#workshop</strong>: <a href="https://discord.com/channels/1367111367102042112/1367111370176331836" target="_blank">open channel</a></p>
+
+        <h3 style="margin:18px 0 8px;">PyCon Togo 2025</h3>
+        <p><strong>Saturday, August 23, 2025</strong> — final confirmation coming soon.<br/>
+        Provisional venue: <strong>UniPod amphitheatre, University of Lomé</strong>.</p>
+
+        <p style="margin-top:24px; color:#555;">— The Python Togo Team</p>
+    </div>
+    """
+    return subject, html
+
+
+
 
 if __name__ == "__main__":
     participants = get_some_thing("participants")
     if not participants:
         print("No participants found.")
-        
+    
+    subject, body = daily_mail_with_task("Participant", 1, "Titre de la tâche", "Task Title", "https://example.com/fr", "https://example.com/en")
+    send_email_with_or_without_attachment(body, subject, receiver_email="wachioubouraima56@gmail.com")
     for participant in participants:
             first_name = participant.get('full_name', 'Participant')
             participant_email = participant.get('email')
@@ -332,4 +853,4 @@ if __name__ == "__main__":
                 )
                 subject = email['subject']
                 
-                send_email_with_or_without_attachment(body, subject, participant_email)
+                
