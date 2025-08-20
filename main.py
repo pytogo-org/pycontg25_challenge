@@ -1,4 +1,3 @@
-
 import os
 import typing
 
@@ -18,7 +17,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from datetime import datetime, timedelta, timezone
-from models import  ParticipantRegistration, ProgressInfo, TaskSubmission, TaskInfo
+from models import  ParticipantRegistration, ProgressInfo, TaskSubmission, TaskInfo, Feedback
 from db import get_one_where, insert_into_table, get_some_thing, get_some_where, get_record_by_email, get_record_by_email
 from dotenv import load_dotenv
 from routes.cron import router as cron_router
@@ -242,6 +241,26 @@ async def get_progress(progress: ProgressInfo):
 
 
     return {"progress": task_progress, "stats": stat_count}
+
+@app.get('/feedback')
+def feedback_page(request: Request):
+    """Serve the feedback page"""
+    return templates.TemplateResponse("feedback.html", {"request": request})
+
+
+@app.post('/api/feedback')
+async def receive_feedback(feedback: Feedback):
+    """Receive feedback from participants and store it in the database"""
+    try:
+        data = feedback.dict()
+        inserted = insert_into_table('feedbacks', data)
+        if inserted:
+            return {"message": "Feedback received successfully"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to store feedback")
+    except Exception as e:
+        print(f"Error storing feedback: {e}")
+        raise HTTPException(status_code=500, detail="Server error")
 
 if __name__ == "__main__":
     # Populate tasks in the database

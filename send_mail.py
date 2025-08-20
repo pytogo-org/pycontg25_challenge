@@ -69,8 +69,18 @@ def send_daily_email(first_name, day_number, fr_title, en_title, fr_link, en_lin
     """
     Sends the daily challenge email to the participant.
     """
-    from welcome import  get_bilingual_challenge_email # , get_daily_challenge_email
-    subject, body = get_bilingual_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
+    from welcome import mail_day_bilingual, mail_day_23 # daily_mail_with_task # daily_task_mail_after_live # get_bilingual_challenge_email , new_new_new_mail_daily_mail #new_daily_challenge_email# , get_daily_challenge_email
+    # subject, body = get_bilingual_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
+    #subject, body = new_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
+    subject, body = mail_day_bilingual(
+        participant=first_name,
+        day_number=day_number,
+        fr_title=fr_title,
+        en_title=en_title, 
+        fr_link=fr_link,
+        en_link=en_link
+    )
+    # subject, body = get_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
     # email_msgs = get_daily_challenge_email(first_name, day_number, fr_title, en_title, fr_link, en_link)
     # for email in email_msgs:
     #     body = render_email_template(
@@ -145,14 +155,24 @@ if __name__ == "__main__":
                 print(f"Email already sent to {participant_email} for day {day_number}. Skipping.")
             else:
                 try:
-                    submission_instruction_email(
+                    #submission_instruction_email(
+                    #    first_name=first_name,
+                    #    fr_title=fr_title,
+                    #    en_title=en_title,
+                    #    fr_link=fr_link,
+                    #    en_link=en_link,
+                    #    participant_email=participant_email
+                    #)
+                    send_daily_email(
                         first_name=first_name,
+                        day_number=day_number,
                         fr_title=fr_title,
                         en_title=en_title,
                         fr_link=fr_link,
                         en_link=en_link,
                         participant_email=participant_email
                     )
+                    already_sent_day_1.append(participant_email)
                     print(f"Email sent to {participant_email} for day {day_number}.")
                 except Exception as e:
                     print(f"Failed to send email to {participant_email} for day {day_number}: {e}")
@@ -173,3 +193,4 @@ if __name__ == "__main__":
 
     else:
         print(f"Invalid day number: {day_number}. No task found for this day.")
+
